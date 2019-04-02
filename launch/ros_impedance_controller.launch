@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<launch>
+	<arg name="robot_name" default="hyq" />
+
+        <include file="$(eval find(arg('robot_name') + '_description') +'/launch/world.launch')">
+            <arg name="sensors" value="false"/>
+        </include>
+
+	<!-- Loading robot states controller configurations from YAML file to parameter server -->
+        <rosparam file="$(find ros_impedance_controller)/config/joint_state_publisher.yaml" ns="/$(arg robot_name)" command="load"/>
+
+        <!-- Loading ros_impedance_controller config -->
+        <rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller.yaml" ns="/$(arg robot_name)" command="load"/>
+
+	<!-- Loading the controllers -->
+        <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+                output="screen" ns="/$(arg robot_name)" args="joint_state_publisher ros_impedance_controller"/>
+
+	<!-- convert joint states to TF transforms for rviz, etc -->
+	<node name="$(arg robot_name)_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+		<remap from="/joint_states" to="/$(arg robot_name)/joint_states"/> 
+	</node>
+
+
+
+</launch>
+

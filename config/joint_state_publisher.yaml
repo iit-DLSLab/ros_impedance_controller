@@ -1,0 +1,4 @@
+# Publish all joint states -----------------------------------
+joint_state_publisher:
+  type: joint_state_controller/JointStateAdvController
+  publish_rate: 250
