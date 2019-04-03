@@ -23,7 +23,6 @@ Controller::~Controller()
 
 }
    
-
 bool Controller::init(hardware_interface::RobotHW* robot_hw,
                       ros::NodeHandle& root_nh,
                       ros::NodeHandle& controller_nh)
@@ -108,6 +107,9 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
     // Create the subscriber
     sub_ = controller_nh.subscribe("command", 1, &Controller::commandCallback, this);
 
+    // Create the PID set service
+    set_pids_srv_ = controller_nh.advertiseService("set_pids", &Controller::setPidsCallback, this);
+
     return true;
 }
 
@@ -118,6 +120,55 @@ void Controller::starting(const ros::Time& time)
     des_joint_positions_.fill(0.0);
     des_joint_velocities_.fill(0.0);
     des_joint_efforts_.fill(0.0);
+}
+
+bool Controller::setPidsCallback(set_pids::Request& req,
+                                 set_pids::Response& res)
+{
+    res.ack = true;
+
+    for(unsigned int i = 0; i < req.data.size(); i++)
+    {
+        for(unsigned int j = 0; j < joint_names_.size(); j++)
+            if(!std::strcmp(joint_names_[j].c_str(),req.data[i].joint_name.c_str()))
+            {
+                if(req.data[i].p_value>=0.0)
+                {
+                    joint_p_gain_[j] = req.data[i].p_value;
+                    ROS_INFO_STREAM("Set P gain for joint "<< joint_names_[j] << " to: "<<joint_p_gain_[j]);
+                }
+                else
+                {
+                   ROS_WARN("P value has to be positive");
+                   res.ack = false;
+                }
+
+                if(req.data[i].i_value>=0.0)
+                {
+                    joint_i_gain_[j] = req.data[i].i_value;
+                    ROS_INFO_STREAM("Set I gain for joint "<< joint_names_[j] << "to: "<<joint_i_gain_[j]);
+                }
+                else
+                {
+                   ROS_WARN("I value has to be positive");
+                   res.ack = false;
+                }
+
+                if(req.data[i].d_value>=0.0)
+                {
+                    joint_d_gain_[j] = req.data[i].d_value;
+                    ROS_INFO_STREAM("Set D gain for joint "<< joint_names_[j] << "to: "<<joint_d_gain_[j]);
+                }
+                else
+                {
+                   ROS_WARN("D value has to be positive");
+                   res.ack = false;
+                }
+            }
+
+    }
+
+    return true;
 }
 
 void Controller::commandCallback(const sensor_msgs::JointState& msg)

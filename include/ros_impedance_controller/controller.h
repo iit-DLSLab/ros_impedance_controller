@@ -4,6 +4,8 @@
 // Ros
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
+#include <ros_impedance_controller/pids.h>
+#include <ros_impedance_controller/set_pids.h>
 // PluginLib
 #include <pluginlib/class_list_macros.hpp>
 // Ros control
@@ -58,8 +60,11 @@ public:
 private:
 
     void commandCallback(const sensor_msgs::JointState &msg);
+    bool setPidsCallback(set_pids::Request& req,
+                         set_pids::Response& res);
 
     ros::Subscriber sub_;
+    ros::ServiceServer set_pids_srv_;
 
     /** @brief Number of joints */
     unsigned int num_joints_;

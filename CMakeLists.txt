@@ -4,6 +4,21 @@ project(ros_impedance_controller)
 # ROS
 find_package(catkin REQUIRED tf controller_interface dls_hardware_interface realtime_tools sensor_msgs message_generation)
 
+add_message_files(
+  DIRECTORY
+  msg
+  FILES
+  pid.msg
+)
+
+add_service_files(
+  DIRECTORY
+  srv
+  FILES
+  set_pids.srv
+)
+
+generate_messages()
 
 catkin_package(
   INCLUDE_DIRS include
@@ -24,6 +39,7 @@ include_directories(
 
 add_library(${PROJECT_NAME} src/controller.cpp)
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
+add_dependencies(${PROJECT_NAME} ${ros_impedance_controller_EXPORTED_TARGETS})
 
 install(DIRECTORY include/${PROJECT_NAME}/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
