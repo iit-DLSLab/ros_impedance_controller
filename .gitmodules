@@ -1,0 +1,4 @@
+[submodule "matlab_model_hyq"]
+	path = matlab_model_hyq
+	url = git@gitlab.advr.iit.it:mfocchi/matlab_model_hyq.git
+	branch = release
