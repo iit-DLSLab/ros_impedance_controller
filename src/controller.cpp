@@ -1,12 +1,8 @@
 /**
  * @file controller.cpp
- * @author Gennaro Raiola
+ * @author Gennaro Raiola, Michele Focchi
  * @date 12 June, 2018
- * @brief DLS Controller.
- *
- * This file contains the constructor, destructor, init, stopping and other facilities for the
- * DLS Controller.
- * @see git@gitlab.advr.iit.it:dls-lab/dls_core.git
+ * @brief Ros impedance controller.
  */
 
 #include <ros_impedance_controller/controller.h>

@@ -4,7 +4,7 @@
 // Ros
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
-#include <ros_impedance_controller/pids.h>
+#include <ros_impedance_controller/pid.h>
 #include <ros_impedance_controller/set_pids.h>
 // PluginLib
 #include <pluginlib/class_list_macros.hpp>
