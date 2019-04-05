@@ -2,6 +2,6 @@
 	path = matlab_model_hyq
 	url = git@gitlab.advr.iit.it:mfocchi/matlab_model_hyq.git
 	branch = release
-[submodule "python_sim"]
-	path = python_sim
-	url = git@gitlab.advr.iit.it:dls-lab/python_sim.git
+[submodule "python_controller"]
+	path = python_controller
+	url = git@gitlab.advr.iit.it:dls-lab/python_controller.git
