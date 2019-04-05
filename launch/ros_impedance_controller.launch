@@ -1,16 +1,31 @@
 <?xml version="1.0" ?>
 <launch>
 	<arg name="robot_name" default="hyq" />
+        <arg name="only_torque" default="false" />
+        <arg name="task_period" default="0.001"/>
+
+        <param name="robot_name" type="str" value="$(arg robot_name)" />
 
         <include file="$(eval find(arg('robot_name') + '_description') +'/launch/world.launch')">
-            <arg name="sensors" value="false"/>
+            <arg name="sensors" value="false"/> <!-- force to false to avoid multisense publication -->
+            <arg name="task_period" value="$(arg task_period)"/>
         </include>
 
 	<!-- Loading robot states controller configurations from YAML file to parameter server -->
         <rosparam file="$(find ros_impedance_controller)/config/joint_state_publisher.yaml" ns="/$(arg robot_name)" command="load"/>
 
+
         <!-- Loading ros_impedance_controller config -->
-        <rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller.yaml" ns="/$(arg robot_name)" command="load"/>
+        <group if="$(arg only_torque)">
+            <rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller_only_torques.yaml" ns="/$(arg robot_name)" command="load"/>
+        </group>
+        <group unless="$(arg only_torque)">
+
+            <rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller_pd.yaml" ns="/$(arg robot_name)" command="load"/>
+        </group>
+
+        <!-- Loading ros_impedance_controller config -->
+        <!--rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller_pd.yaml" ns="/$(arg robot_name)" command="load"/-->
 
 	<!-- Loading the controllers -->
         <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
