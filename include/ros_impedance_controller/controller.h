@@ -15,7 +15,8 @@
 #include <dls_hardware_interface/joint_command_adv_interface.h> // custom hw
 // Eigen
 #include <Eigen/Dense>
-
+#include <tf/transform_broadcaster.h>
+#include <nav_msgs/Odometry.h>
 
 namespace ros_impedance_controller
 {
@@ -62,8 +63,11 @@ private:
     void commandCallback(const sensor_msgs::JointState &msg);
     bool setPidsCallback(set_pids::Request& req,
                          set_pids::Response& res);
+    void baseGroundTruthCB(const nav_msgs::OdometryConstPtr &msg);
+
 
     ros::Subscriber sub_;
+        ros::Subscriber gt_sub_;
     ros::ServiceServer set_pids_srv_;
 
     /** @brief Number of joints */
@@ -84,6 +88,7 @@ private:
     std::vector<double> joint_i_gain_;
     /** @brief Actual D value for the joints PID controller */
     std::vector<double> joint_d_gain_;
+
 
 
 };

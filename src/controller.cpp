@@ -103,8 +103,18 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
     // Create the subscriber
     sub_ = controller_nh.subscribe("command", 1, &Controller::commandCallback, this);
 
+    //subscriber to the ground truth
+    std::string robot_name = "hyq";
+    controller_nh.getParam("robot_name", robot_name);
+
+    std::cout<<robot_name + "/ground_truth";
+    gt_sub_ = controller_nh.subscribe("/"+robot_name + "/ground_truth", 100, &Controller::baseGroundTruthCB, this);
+
+
     // Create the PID set service
     set_pids_srv_ = controller_nh.advertiseService("set_pids", &Controller::setPidsCallback, this);
+
+
 
     return true;
 }
@@ -183,6 +193,31 @@ void Controller::commandCallback(const sensor_msgs::JointState& msg)
     else
         ROS_WARN("Wrong dimension!");
 }
+
+
+void Controller::baseGroundTruthCB(const nav_msgs::OdometryConstPtr &msg)
+{
+    Eigen::Quaterniond quaternion;
+    static tf::TransformBroadcaster br;
+    tf::Transform b_transform_w;
+    tf::Quaternion q;
+
+    //orientation of base frame
+    q.setX(msg->pose.pose.orientation.x);
+    q.setY(msg->pose.pose.orientation.y);
+    q.setZ(msg->pose.pose.orientation.z);
+    q.setW(msg->pose.pose.orientation.w);
+
+    //the vector of the base is in the world frame, so to apply to the base frame I should rotate it to the base frame before
+    tf::Vector3 world_origin_w(-msg->pose.pose.position.x,-msg->pose.pose.position.y,-msg->pose.pose.position.z);
+    tf::Vector3 world_origin_b = tf::quatRotate(q.inverse(), world_origin_w);
+
+    b_transform_w.setRotation(q.inverse());
+    b_transform_w.setOrigin(world_origin_b);
+    br.sendTransform(tf::StampedTransform(b_transform_w, ros::Time::now(), "/base_link", "/world" ));
+}
+
+
 
 void Controller::update(const ros::Time& time, const ros::Duration& period)
 {
