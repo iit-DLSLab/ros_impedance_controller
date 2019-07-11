@@ -18,6 +18,8 @@
 #include <tf/transform_broadcaster.h>
 #include <nav_msgs/Odometry.h>
 
+#include <geometry_msgs/PoseWithCovarianceStamped.h>
+
 namespace ros_impedance_controller
 {
 
@@ -67,8 +69,9 @@ private:
 
 
     ros::Subscriber sub_;
-        ros::Subscriber gt_sub_;
+    ros::Subscriber gt_sub_;
     ros::ServiceServer set_pids_srv_;
+    ros::Publisher pose_pub_;
 
     /** @brief Number of joints */
     unsigned int num_joints_;
@@ -88,7 +91,8 @@ private:
     std::vector<double> joint_i_gain_;
     /** @brief Actual D value for the joints PID controller */
     std::vector<double> joint_d_gain_;
-
+    tf::Quaternion q_base;
+    tf::Vector3 base_pos_w;
 
 
 };

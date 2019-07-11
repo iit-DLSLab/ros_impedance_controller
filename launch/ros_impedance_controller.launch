@@ -4,11 +4,12 @@
         <arg name="only_torque" default="false" />
         <arg name="task_period" default="0.001"/>
         <arg name="refgen" default="false"/>
+        <arg name="sensors" default="false"/>
 
         <param name="robot_name" type="str" value="$(arg robot_name)" />
 
         <include file="$(eval find(arg('robot_name') + '_description') +'/launch/world.launch')">
-            <arg name="sensors" value="false"/> <!-- force to false to avoid multisense publication -->
+            <arg name="sensors" value="$(arg sensors)"/> <!-- force to false to avoid multisense publication -->
             <arg name="task_period" value="$(arg task_period)"/>
         </include>
 

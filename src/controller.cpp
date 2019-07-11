@@ -7,6 +7,7 @@
 
 #include <ros_impedance_controller/controller.h>
 
+
 namespace ros_impedance_controller {
 
 
@@ -114,7 +115,7 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
     // Create the PID set service
     set_pids_srv_ = controller_nh.advertiseService("set_pids", &Controller::setPidsCallback, this);
 
-
+    pose_pub_ =  controller_nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/"+robot_name + "/pose", 1);
 
     return true;
 }
@@ -197,27 +198,28 @@ void Controller::commandCallback(const sensor_msgs::JointState& msg)
 
 void Controller::baseGroundTruthCB(const nav_msgs::OdometryConstPtr &msg)
 {
-    Eigen::Quaterniond quaternion;
+
     static tf::TransformBroadcaster br;
     tf::Transform b_transform_w;
-    tf::Quaternion q;
+
 
     //orientation of base frame
-    q.setX(msg->pose.pose.orientation.x);
-    q.setY(msg->pose.pose.orientation.y);
-    q.setZ(msg->pose.pose.orientation.z);
-    q.setW(msg->pose.pose.orientation.w);
+    q_base.setX(msg->pose.pose.orientation.x);
+    q_base.setY(msg->pose.pose.orientation.y);
+    q_base.setZ(msg->pose.pose.orientation.z);
+    q_base.setW(msg->pose.pose.orientation.w);
+    //position of base frame
+    base_pos_w = tf::Vector3(msg->pose.pose.position.x,msg->pose.pose.position.y,msg->pose.pose.position.z);
+
 
     //the vector of the base is in the world frame, so to apply to the base frame I should rotate it to the base frame before
     tf::Vector3 world_origin_w(-msg->pose.pose.position.x,-msg->pose.pose.position.y,-msg->pose.pose.position.z);
-    tf::Vector3 world_origin_b = tf::quatRotate(q.inverse(), world_origin_w);
+    tf::Vector3 world_origin_b = tf::quatRotate(q_base.inverse(), world_origin_w);
 
-    b_transform_w.setRotation(q.inverse());
+    b_transform_w.setRotation(q_base.inverse());
     b_transform_w.setOrigin(world_origin_b);
     br.sendTransform(tf::StampedTransform(b_transform_w, ros::Time::now(), "/base_link", "/world" ));
 }
-
-
 
 void Controller::update(const ros::Time& time, const ros::Duration& period)
 {
@@ -234,6 +236,18 @@ void Controller::update(const ros::Time& time, const ros::Duration& period)
         joint_states_[i].setCommandVelocity(des_joint_velocities_(i));
         joint_states_[i].setCommandGains(joint_p_gain_[i],joint_i_gain_[i],joint_d_gain_[i]); //Set Gains P I D to zero
     }
+    //publish hyq pose for the mapper node
+    geometry_msgs::PoseWithCovarianceStamped pose_msg;
+    pose_msg.header.stamp =ros::Time::now();
+    pose_msg.header.frame_id = "world";
+    pose_msg.pose.pose.position.x = base_pos_w.x();
+    pose_msg.pose.pose.position.y = base_pos_w.y();
+    pose_msg.pose.pose.position.z = base_pos_w.z();
+    pose_msg.pose.pose.orientation.w = q_base.w();
+    pose_msg.pose.pose.orientation.x = q_base.x();
+    pose_msg.pose.pose.orientation.y = q_base.y();
+    pose_msg.pose.pose.orientation.z = q_base.z();
+    pose_pub_.publish(pose_msg);
 
 }
 
