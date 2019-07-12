@@ -5,19 +5,31 @@
         <arg name="task_period" default="0.001"/>
         <arg name="refgen" default="false"/>
         <arg name="sensors" default="false"/>
+        <arg name="world_name" default="empty.world" />
+        <arg name="rviz" default="true" />
+        <arg name="rviz_conf" default="$(find dls_supervisor)/config/operator.rviz"/>
 
         <param name="robot_name" type="str" value="$(arg robot_name)" />
+        <param name="sensors" type="bool" value="$(arg sensors)" />
+
+
 
         <include file="$(eval find(arg('robot_name') + '_description') +'/launch/world.launch')">
+            <arg name="world_name" value="$(arg world_name)" />
             <arg name="sensors" value="$(arg sensors)"/> <!-- force to false to avoid multisense publication -->
             <arg name="task_period" value="$(arg task_period)"/>
         </include>
 
 	<!-- Loading robot states controller configurations from YAML file to parameter server -->
         <rosparam file="$(find ros_impedance_controller)/config/joint_state_publisher.yaml" ns="/$(arg robot_name)" command="load"/>
+
+        <!--loadgding the reference generator-->
         <group if="$(arg refgen)">
-            <include  file="$(find reference_generator)/launch/reference_generator.launch"/>
+            <include file="$(find reference_generator)/launch/reference_generator.launch"/>
         </group>
+
+
+
 
         <!-- Loading ros_impedance_controller config -->
         <group if="$(arg only_torque)">
@@ -36,7 +48,8 @@
 		<remap from="/joint_states" to="/$(arg robot_name)/joint_states"/> 
 	</node>
 
-
+        <!-- run rviz -->
+        <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_conf) -f world" if="$(arg rviz)"/>
 
 </launch>
 
