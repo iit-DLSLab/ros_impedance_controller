@@ -51,5 +51,10 @@
         <!-- run rviz -->
         <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_conf) -f world" if="$(arg rviz)"/>
 
+<!--         plot node launch -->
+     <!--    <include  file="$(find wb_controller)/launch/plot_node.launch" >
+            <arg name="robot_name" value="$(arg robot_name)" />
+        </include>-->
+
 </launch>
 
