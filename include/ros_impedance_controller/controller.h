@@ -20,6 +20,9 @@
 
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 
+#include <dls_map_interface/GridMapInterface.hpp>
+#include <ros_impedance_controller/get_map.h>
+
 namespace ros_impedance_controller
 {
 
@@ -66,11 +69,14 @@ private:
     bool setPidsCallback(set_pids::Request& req,
                          set_pids::Response& res);
     void baseGroundTruthCB(const nav_msgs::OdometryConstPtr &msg);
-
+    bool getMapCallback(get_map::Request& req,
+                         get_map::Response& res);
 
     ros::Subscriber sub_;
     ros::Subscriber gt_sub_;
     ros::ServiceServer set_pids_srv_;
+    ros::ServiceServer get_map_srv_;
+
     ros::Publisher pose_pub_;
 
     /** @brief Number of joints */
@@ -94,6 +100,7 @@ private:
     tf::Quaternion q_base;
     tf::Vector3 base_pos_w;
 
+    dls::perception::GridMapTerrainROS grid_map_terrain_;
 
 };
 

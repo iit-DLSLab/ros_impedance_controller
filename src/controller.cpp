@@ -115,7 +115,15 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
     // Create the PID set service
     set_pids_srv_ = controller_nh.advertiseService("set_pids", &Controller::setPidsCallback, this);
 
+
     pose_pub_ =  controller_nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/"+robot_name + "/pose", 1);
+
+    //gridmap
+    get_map_srv_ = controller_nh.advertiseService("get_map", &Controller::getMapCallback, this);
+    std::string grid_map_topic = "/local_gridmap";
+    std::cout << "Setting Grid Map topic to: " << grid_map_topic << std::endl;
+    grid_map_terrain_.init(controller_nh, grid_map_topic);
+
 
     return true;
 }
@@ -127,6 +135,43 @@ void Controller::starting(const ros::Time& time)
     des_joint_positions_.fill(0.0);
     des_joint_velocities_.fill(0.0);
     des_joint_efforts_.fill(0.0);
+}
+
+
+
+bool Controller::getMapCallback(get_map::Request& req,
+                     get_map::Response& res)
+{
+    grid_map_terrain_.update();
+    Eigen::Vector2d target;
+    target(0) = req.target.x;
+    target(1) = req.target.y;
+    float terrain_height;
+    //test
+//    grid_map_terrain_.getHeight(target, terrain_height);
+//    std::cout<<"terrain height at target " <<target.transpose() << " is " << terrain_height<<std::endl;
+
+    int  points_x = req.length / req.resolution_x;
+    int  points_y = req.width / req.resolution_y;
+
+    res.row_length = points_x;
+
+    Eigen::MatrixXd M(points_y, points_x);
+
+    for (int i= 0; i<points_y;i++)
+    {
+        for (int j= 0; j<points_x;j++)
+        {
+            Eigen::Vector2d eval_point;
+            eval_point(0) = target(0) + req.resolution_x*j;
+            eval_point(1) = target(1) - req.resolution_y*i;
+            grid_map_terrain_.getHeight(eval_point, terrain_height);
+            res.height_array.push_back(terrain_height);
+            M(i,j) = terrain_height;
+        }
+    }
+    std::cout<<"height map" <<std::endl<< M <<std::endl;
+
 }
 
 bool Controller::setPidsCallback(set_pids::Request& req,

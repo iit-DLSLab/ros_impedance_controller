@@ -19,8 +19,8 @@
   <depend>message_generation</depend>
   <depend>message_runtime</depend>
   <depend>rviz_visual_tools</depend>
-
-
+  <depend>dls_map_interface</depend>
+  <depend>geometry_msgs</depend>
   <!-- The export tag contains other, unspecified, tags -->
   <export>
     <controller_interface plugin="${prefix}/controller_plugin.xml"/>
