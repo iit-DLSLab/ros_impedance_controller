@@ -72,13 +72,13 @@ install(DIRECTORY config/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
   PATTERN ".svn" EXCLUDE)
 
-add_library(contact SHARED src/ContactPlugin.cc)
-target_link_libraries(contact ${GAZEBO_LIBRARIES})
+#add_library(contact SHARED src/ContactPlugin.cc)
+#target_link_libraries(contact ${GAZEBO_LIBRARIES})
 
-add_executable(plot_grf src/plot_node.cpp)
-target_link_libraries(plot_grf ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES} contact)
+#add_executable(plot_grf src/plot_node.cpp)
+#target_link_libraries(plot_grf ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES} contact)
 
-install(TARGETS ${PROJECT_NAME} plot_grf contact
+install(TARGETS ${PROJECT_NAME} #plot_grf contact
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
