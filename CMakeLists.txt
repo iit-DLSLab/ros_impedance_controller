@@ -4,9 +4,9 @@ project(ros_impedance_controller)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 # ROS
-find_package(catkin REQUIRED tf controller_interface dls_hardware_interface
+find_package(catkin REQUIRED tf controller_interface
             realtime_tools sensor_msgs message_generation gazebo_msgs rviz_visual_tools
-            gazebo dls_map_interface geometry_msgs REQUIRED)
+			gazebo  geometry_msgs REQUIRED)
 
 
 

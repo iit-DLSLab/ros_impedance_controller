@@ -12,21 +12,23 @@
 #include <controller_interface/controller.h>
 #include <controller_interface/multi_interface_controller.h>
 // Hardware interfaces
-#include <dls_hardware_interface/joint_command_adv_interface.h> // custom hw
+#include <hardware_interface/joint_command_interface.h>
+
 // Eigen
 #include <Eigen/Dense>
+
+//map
 #include <tf/transform_broadcaster.h>
 #include <nav_msgs/Odometry.h>
-
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 
-#include <dls_map_interface/GridMapInterface.hpp>
+//#include <dls_map_interface/GridMapInterface.hpp>
 #include <ros_impedance_controller/get_map.h>
 
 namespace ros_impedance_controller
 {
 
-class Controller : public controller_interface::MultiInterfaceController<hardware_interface::JointCommandAdvInterface>
+class Controller : public controller_interface::MultiInterfaceController<hardware_interface::EffortJointInterface>
 {
 public:
     /** @brief Constructor function */
@@ -83,8 +85,8 @@ private:
     unsigned int num_joints_;
     /** @brief Joint names */
     std::vector<std::string> joint_names_;
-    /** @brief Joint states for input and output */
-    std::vector<hardware_interface::JointCommandAdvHandle> joint_states_;
+    /** @brief Joint states for reading positions, velocities and efforts and writing effort commands */
+    std::vector<hardware_interface::JointHandle> joint_states_;
     /** @brief Desired joint efforts */
     Eigen::VectorXd des_joint_efforts_;
     /** @brief Desired joint positions */
@@ -100,7 +102,7 @@ private:
     tf::Quaternion q_base;
     tf::Vector3 base_pos_w;
 
-    dls::perception::GridMapTerrainROS grid_map_terrain_;
+    //dls::perception::GridMapTerrainROS grid_map_terrain_;
 
 };
 
