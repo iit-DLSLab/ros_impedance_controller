@@ -14,6 +14,8 @@
 // Hardware interfaces
 #include <hardware_interface/joint_command_interface.h>
 
+//pid
+#include <control_toolbox/pid.h>
 // Eigen
 #include <Eigen/Dense>
 
@@ -22,8 +24,7 @@
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 
-//#include <dls_map_interface/GridMapInterface.hpp>
-#include <ros_impedance_controller/get_map.h>
+
 
 namespace ros_impedance_controller
 {
@@ -71,8 +72,6 @@ private:
     bool setPidsCallback(set_pids::Request& req,
                          set_pids::Response& res);
     void baseGroundTruthCB(const nav_msgs::OdometryConstPtr &msg);
-    bool getMapCallback(get_map::Request& req,
-                         get_map::Response& res);
 
     ros::Subscriber sub_;
     ros::Subscriber gt_sub_;
@@ -99,6 +98,11 @@ private:
     std::vector<double> joint_i_gain_;
     /** @brief Actual D value for the joints PID controller */
     std::vector<double> joint_d_gain_;
+    /** @brief Vector containing the pids for the joints */
+    std::vector<control_toolbox::Pid> pids_;
+    /** @brief Desired joint efforts computed by the PIDs */
+    Eigen::VectorXd des_joint_efforts_pids_;
+    
     tf::Quaternion q_base;
     tf::Vector3 base_pos_w;
 

@@ -2,12 +2,11 @@ cmake_minimum_required(VERSION 2.8.3)
 project(ros_impedance_controller)
 
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -std=c++11")
 # ROS
 find_package(catkin REQUIRED tf controller_interface
             realtime_tools sensor_msgs message_generation gazebo_msgs rviz_visual_tools
-			gazebo  geometry_msgs REQUIRED)
-
+			geometry_msgs REQUIRED)
 
 
 add_message_files(
@@ -43,10 +42,10 @@ catkin_package(
 include_directories(
     include
     ${catkin_INCLUDE_DIRS}
-    ${GAZEBO_INCLUDE_DIRS}
+
 )
 
-link_directories(${GAZEBO_LIBRARY_DIRS})
+
 
 add_library(${PROJECT_NAME} src/controller.cpp)
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} )
@@ -72,13 +71,11 @@ install(DIRECTORY config/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
   PATTERN ".svn" EXCLUDE)
 
-add_library(contact SHARED src/ContactPlugin.cc)
-target_link_libraries(contact ${GAZEBO_LIBRARIES})
+install(DIRECTORY worlds/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
+  PATTERN ".svn" EXCLUDE)
 
-add_executable(plot_grf src/plot_node.cpp)
-target_link_libraries(plot_grf ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES} contact)
-
-install(TARGETS ${PROJECT_NAME} plot_grf contact
+install(TARGETS ${PROJECT_NAME} 
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

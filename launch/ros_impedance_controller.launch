@@ -3,35 +3,21 @@
 	<arg name="robot_name" default="hyq" />
         <arg name="only_torque" default="false" />
         <arg name="task_period" default="0.001"/>
-        <arg name="refgen" default="false"/>
-        <arg name="sensors" default="false"/>
         <arg name="world_name" default="empty.world" />
         <arg name="rviz" default="true" />
-        <arg name="rviz_conf" default="$(find dls_supervisor)/config/operator.rviz"/>
-
+        <arg name="rviz_conf" default="$(find ros_impedance_controller)/config/operator.rviz"/>
         <param name="robot_name" type="str" value="$(arg robot_name)" />
-        <param name="sensors" type="bool" value="$(arg sensors)" />
 
-
-
+		<!-- Loading robot decription into parameter server and launching gazebo--> 		
         <include file="$(eval find(arg('robot_name') + '_description') +'/launch/world.launch')">
             <arg name="world_name" value="$(arg world_name)" />
-            <arg name="sensors" value="$(arg sensors)"/> <!-- force to false to avoid multisense publication -->
             <arg name="task_period" value="$(arg task_period)"/>
         </include>
 
-	<!-- Loading robot states controller configurations from YAML file to parameter server -->
+		<!-- Loading robot states controller configurations from YAML file to parameter server -->
         <rosparam file="$(find ros_impedance_controller)/config/joint_state_publisher.yaml" ns="/$(arg robot_name)" command="load"/>
 
-        <!--loadgding the reference generator-->
-        <group if="$(arg refgen)">
-            <include file="$(find reference_generator)/launch/reference_generator.launch"/>
-        </group>
-
-
-
-
-        <!-- Loading ros_impedance_controller config -->
+         <!-- Loading ros_impedance_controller config -->
         <group if="$(arg only_torque)">
             <rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller_only_torques.yaml" ns="/$(arg robot_name)" command="load"/>
         </group>
@@ -43,18 +29,13 @@
         <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
                 output="screen" ns="/$(arg robot_name)" args="joint_state_publisher ros_impedance_controller"/>
 
-	<!-- convert joint states to TF transforms for rviz, etc -->
-	<node name="$(arg robot_name)_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
-		<remap from="/joint_states" to="/$(arg robot_name)/joint_states"/> 
-	</node>
+		<!-- convert joint states to TF transforms for rviz, etc -->
+		<node name="$(arg robot_name)_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+			<remap from="/joint_states" to="/$(arg robot_name)/joint_states"/> 
+		</node>
 
         <!-- run rviz -->
         <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_conf) -f world" if="$(arg rviz)"/>
-
-<!--         plot node launch -->
-     <!--    <include  file="$(find wb_controller)/launch/plot_node.launch" >
-            <arg name="robot_name" value="$(arg robot_name)" />
-        </include>-->
 
 </launch>
 
