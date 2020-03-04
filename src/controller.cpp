@@ -231,18 +231,22 @@ void Controller::update(const ros::Time& time, const ros::Duration& period)
     ROS_DEBUG_STREAM("des_joint_efforts_: " << des_joint_efforts_.transpose());
     ROS_DEBUG_STREAM("des_joint_velocities_: " << des_joint_velocities_.transpose());
     ROS_DEBUG_STREAM("des_joint_positions_: " << des_joint_positions_.transpose());
-
+    
    
     // Write to the hardware interface
     for (unsigned int i = 0; i < joint_states_.size(); i++)
     {      
         //compute PID
-        pids_[i].setGains(joint_p_gain_[i],joint_i_gain_[i],joint_d_gain_[i],0,0);
-        des_joint_efforts_pids_(i) = pids_[i].computeCommand(des_joint_positions_(i)-joint_states_[i].getPosition(),
-                                                             des_joint_velocities_(i)-joint_states_[i].getVelocity(),
-                                                             period);
+//        pids_[i].setGains(joint_p_gain_[i],joint_i_gain_[i],joint_d_gain_[i],0,0);
+//        des_joint_efforts_pids_(i) = pids_[i].computeCommand(des_joint_positions_(i)-joint_states_[i].getPosition(),
+//                                                             des_joint_velocities_(i)-joint_states_[i].getVelocity(),
+//                                                             period);
+
+        des_joint_efforts_pids_(i) = joint_p_gain_[i]*(des_joint_positions_(i)-joint_states_[i].getPosition()) +
+                                     joint_d_gain_[i]*(des_joint_velocities_(i)-joint_states_[i].getVelocity());
         //add PID + FFWD
-        joint_states_[i].setCommand(des_joint_efforts_(i) + des_joint_efforts_pids_(i));
+        joint_states_[i].setCommand(des_joint_efforts_(i) +  des_joint_efforts_pids_(i));
+                
     }
 
 
