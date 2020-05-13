@@ -106,7 +106,7 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
     pids_.resize(joint_states_.size());
     
     // Create the subscriber
-    sub_ = controller_nh.subscribe("command", 1, &Controller::commandCallback, this);
+    sub_ = root_nh.subscribe("command", 1, &Controller::commandCallback, this);
 
     //subscriber to the ground truth
     std::string robot_name = "hyq";
@@ -117,7 +117,7 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
 
 
     // Create the PID set service
-    set_pids_srv_ = controller_nh.advertiseService("set_pids", &Controller::setPidsCallback, this);
+    set_pids_srv_ = root_nh.advertiseService("set_pids", &Controller::setPidsCallback, this);
 
 	pose_pub_ =  controller_nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/"+robot_name + "/pose", 1);
 
