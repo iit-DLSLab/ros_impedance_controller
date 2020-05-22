@@ -8,7 +8,7 @@
         <arg name="rviz_conf" default="$(find ros_impedance_controller)/config/operator.rviz"/>
         <param name="robot_name" type="str" value="$(arg robot_name)" />
 
-		<!-- Loading robot decription into parameter server and launching gazebo--> 		
+                <!-- Loading robot decription into parameter server and launching gazebo-->
         <include file="$(eval find(arg('robot_name') + '_description') +'/launch/world.launch')">
             <arg name="world_name" value="$(arg world_name)" />
             <arg name="task_period" value="$(arg task_period)"/>
@@ -25,7 +25,7 @@
             <rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller_pd.yaml" ns="/$(arg robot_name)" command="load"/>
         </group>
 
-        <!-- Loading the controllers -->
+        <!-- Loading the controllers (joint state publisher (install ros-kinetic-joint-state-controller) is necessary for robot_state publisher to compute the TFs) -->
         <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
                 output="screen" ns="/$(arg robot_name)" args="joint_state_publisher ros_impedance_controller"/>
 
