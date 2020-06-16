@@ -19,7 +19,7 @@
         </include>
 
         <!-- 2 - load the robot URDF into param server (this will have to contain ros_control plugin and transmissions) -->
-         <!-- to set the task_period  you need to regenerate the urdf-->
+         <!-- to set the task_period  you need to regenerate the urdf from hyq description by changing <updateRate> of plugin libgazebo_ros_p3d.so-->
         <param name="robot_description" textfile="$(find ros_impedance_controller)/config/hyq.urdf" />
 
         <!-- 3 Spawn a robot into Gazebo -->
@@ -42,7 +42,7 @@
 
         <!--  rviz stuff -->
         <!-- 6- load robot_state_publisher: converts joint states to TF transforms, it is just for rviz, etc -->
-        <node name="$(arg robot_name)_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+        <node name="robot_state_publisher_for_rviz" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
                 <remap from="/joint_states" to="/$(arg robot_name)/joint_states"/>
         </node>
 

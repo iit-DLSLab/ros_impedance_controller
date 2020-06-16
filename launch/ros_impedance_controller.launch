@@ -26,11 +26,11 @@
         </group>
 
         <!-- Loading the controllers (joint state publisher (install ros-kinetic-joint-state-controller) is necessary for robot_state publisher to compute the TFs) -->
-        <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+        <node name="ros_impedance_controller" pkg="controller_manager" type="spawner" respawn="false"
                 output="screen" ns="/$(arg robot_name)" args="joint_state_publisher ros_impedance_controller"/>
 
 		<!-- convert joint states to TF transforms for rviz, etc -->
-		<node name="$(arg robot_name)_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+                <node name="robot_state_publisher_for_rviz" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
 			<remap from="/joint_states" to="/$(arg robot_name)/joint_states"/> 
 		</node>
 
