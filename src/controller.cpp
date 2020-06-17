@@ -116,11 +116,16 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
     gt_sub_ = controller_nh.subscribe("/"+robot_name + "/ground_truth", 100, &Controller::baseGroundTruthCB, this);
 
 
+
+
     // Create the PID set service
     set_pids_srv_ = root_nh.advertiseService("set_pids", &Controller::setPidsCallback, this);
 
 	pose_pub_ =  controller_nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/"+robot_name + "/pose", 1);
 
+    //get params from parameter server
+    ros::NodeHandle param_node; //this node is in the ws mpc and not in reference generator
+    param_node.getParam("verbose", verbose);
 
     return true;
 }
@@ -149,7 +154,8 @@ bool Controller::setPidsCallback(set_pids::Request& req,
                 if(req.data[i].p_value>=0.0)
                 {
                     joint_p_gain_[j] = req.data[i].p_value;
-                    ROS_INFO_STREAM("Set P gain for joint "<< joint_names_[j] << " to: "<<joint_p_gain_[j]);
+                    if (verbose)
+                        ROS_INFO_STREAM("Set P gain for joint "<< joint_names_[j] << " to: "<<joint_p_gain_[j]);
                 }
                 else
                 {
@@ -160,7 +166,8 @@ bool Controller::setPidsCallback(set_pids::Request& req,
                 if(req.data[i].i_value>=0.0)
                 {
                     joint_i_gain_[j] = req.data[i].i_value;
-                    ROS_INFO_STREAM("Set I gain for joint "<< joint_names_[j] << "to: "<<joint_i_gain_[j]);
+                    if (verbose)
+                        ROS_INFO_STREAM("Set I gain for joint "<< joint_names_[j] << "to: "<<joint_i_gain_[j]);
                 }
                 else
                 {
@@ -171,7 +178,8 @@ bool Controller::setPidsCallback(set_pids::Request& req,
                 if(req.data[i].d_value>=0.0)
                 {
                     joint_d_gain_[j] = req.data[i].d_value;
-                    ROS_INFO_STREAM("Set D gain for joint "<< joint_names_[j] << "to: "<<joint_d_gain_[j]);
+                    if (verbose)
+                        ROS_INFO_STREAM("Set D gain for joint "<< joint_names_[j] << "to: "<<joint_d_gain_[j]);
                 }
                 else
                 {

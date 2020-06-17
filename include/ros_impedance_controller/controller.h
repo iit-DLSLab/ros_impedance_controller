@@ -98,14 +98,10 @@ private:
     std::vector<double> joint_i_gain_;
     /** @brief Actual D value for the joints PID controller */
     std::vector<double> joint_d_gain_;
-    /** @brief Vector containing the pids for the joints */
-    std::vector<control_toolbox::Pid> pids_;
-    /** @brief Desired joint efforts computed by the PIDs */
-    Eigen::VectorXd des_joint_efforts_pids_;
-    
     tf::Quaternion q_base;
     tf::Vector3 base_pos_w;
 
+    bool verbose = false;
     //dls::perception::GridMapTerrainROS grid_map_terrain_;
 
 };
