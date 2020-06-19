@@ -6,7 +6,6 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /RobotModel1/Status1
       Splitter Ratio: 0.617816091
     Tree Height: 855
   - Class: rviz/Selection
@@ -162,11 +161,19 @@ Visualization Manager:
       Update Interval: 0
       Value: true
       Visual Enabled: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /vis
+      Name: MarkerArray
+      Namespaces:
+        "": true
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 252; 252; 252
     Default Light: true
-    Fixed Frame: trunk
+    Fixed Frame: world
     Frame Rate: 30
   Name: root
   Tools:
@@ -243,5 +250,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1855
-  X: 642
-  Y: 69
+  X: 65
+  Y: 24

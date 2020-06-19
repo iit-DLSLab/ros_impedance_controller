@@ -4,9 +4,12 @@ project(ros_impedance_controller)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -std=c++11")
 # ROS
+
+
+
 find_package(catkin REQUIRED tf controller_interface
             realtime_tools sensor_msgs message_generation gazebo_msgs rviz_visual_tools
-			geometry_msgs REQUIRED)
+                        geometry_msgs     REQUIRED)
 
 
 add_message_files(
@@ -27,12 +30,14 @@ add_service_files(
 generate_messages(DEPENDENCIES geometry_msgs)
 
 catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}
+  INCLUDE_DIRS include ${GAZEBO_INCLUDE_DIRS}
+  LIBRARIES ${PROJECT_NAME} ${GAZEBO_LIBRARIES}
   CATKIN_DEPENDS message_runtime sensor_msgs geometry_msgs
+
 
 )
 
+message("AAA"  ${GAZEBO_INCLUDE_DIRS})
 ###########
 ## Build ##
 ###########
@@ -40,15 +45,15 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-    include
+    include  ${GAZEBO_INCLUDE_DIRS}
     ${catkin_INCLUDE_DIRS}
 
 )
 
-
+link_directories(${GAZEBO_LIBRARY_DIRS})
 
 add_library(${PROJECT_NAME} src/controller.cpp)
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} )
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
 add_dependencies(${PROJECT_NAME} ${ros_impedance_controller_EXPORTED_TARGETS})
 
 install(DIRECTORY include/${PROJECT_NAME}/

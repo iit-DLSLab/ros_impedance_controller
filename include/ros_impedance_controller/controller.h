@@ -23,8 +23,9 @@
 #include <tf/transform_broadcaster.h>
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
+#include <gazebo_msgs/ContactsState.h>
 
-
+#include <gazebo/sensors/ContactSensor.hh>
 
 namespace ros_impedance_controller
 {
@@ -79,7 +80,7 @@ private:
     ros::ServiceServer get_map_srv_;
 
     ros::Publisher pose_pub_;
-
+    ros::Publisher contact_state_pub_;
     /** @brief Number of joints */
     unsigned int num_joints_;
     /** @brief Joint names */
@@ -98,9 +99,17 @@ private:
     std::vector<double> joint_i_gain_;
     /** @brief Actual D value for the joints PID controller */
     std::vector<double> joint_d_gain_;
+    /** @brief Desired joint efforts computed by the PIDs */
+    Eigen::VectorXd des_joint_efforts_pids_;
     tf::Quaternion q_base;
     tf::Vector3 base_pos_w;
 
+    std::vector<std::shared_ptr<gazebo::sensors::ContactSensor> > foot_sensors_;
+    std::vector<std::vector<double> > force_;
+    std::vector<std::vector<double> > torque_;
+    std::vector<std::vector<double> > normal_;
+
+    ros::NodeHandle * root_nh_;
     bool verbose = false;
     //dls::perception::GridMapTerrainROS grid_map_terrain_;
 

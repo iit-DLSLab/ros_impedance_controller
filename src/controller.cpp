@@ -7,7 +7,7 @@
 
 #include <ros_impedance_controller/controller.h>
 
-
+#include <gazebo/sensors/SensorManager.hh>
 namespace ros_impedance_controller {
 
 
@@ -26,7 +26,7 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
 {
     // getting the names of the joints from the ROS parameter server
     ROS_DEBUG("Initialize Controller");
-
+    root_nh_ = &root_nh;
     assert(robot_hw);
 
 
@@ -103,8 +103,25 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
     des_joint_efforts_.fill(0.0);
     des_joint_efforts_pids_.resize(joint_states_.size());
     des_joint_efforts_.fill(0.0);
-    pids_.resize(joint_states_.size());
-    
+
+
+    //foot switch
+    foot_sensors_.resize(4);
+    std::vector<std::string> foot_sensor_names(4);
+    foot_sensor_names[0] = std::string("lf_foot_contact_sensor");
+    foot_sensor_names[1] = std::string("rf_foot_contact_sensor");
+    foot_sensor_names[2] = std::string("lh_foot_contact_sensor");
+    foot_sensor_names[3] = std::string("rh_foot_contact_sensor");
+
+
+    for (int n = 0; n < foot_sensors_.size(); n++) {
+        foot_sensors_[n] = std::dynamic_pointer_cast<gazebo::sensors::ContactSensor>
+                (gazebo::sensors::SensorManager::Instance()->GetSensor(foot_sensor_names[n]));
+        if (!this->foot_sensors_[n]) 	{
+            ROS_ERROR_STREAM("Could not find foot sensor \"" << foot_sensor_names[n] << "\".");
+        }
+    }
+
     // Create the subscriber
     sub_ = root_nh.subscribe("command", 1, &Controller::commandCallback, this);
 
@@ -121,11 +138,11 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
     // Create the PID set service
     set_pids_srv_ = root_nh.advertiseService("set_pids", &Controller::setPidsCallback, this);
 
-	pose_pub_ =  controller_nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/"+robot_name + "/pose", 1);
+    pose_pub_ =  controller_nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/"+robot_name + "/pose", 1);
+    contact_state_pub_ =  controller_nh.advertise<gazebo_msgs::ContactsState>("/"+robot_name + "/contacts_state", 1);
 
     //get params from parameter server
-    ros::NodeHandle param_node; //this node is in the ws mpc and not in reference generator
-    param_node.getParam("verbose", verbose);
+    root_nh_->getParam("/hyq/verbose", verbose);
 
     return true;
 }
@@ -144,6 +161,9 @@ void Controller::starting(const ros::Time& time)
 bool Controller::setPidsCallback(set_pids::Request& req,
                                  set_pids::Response& res)
 {
+    //get params from parameter server
+    root_nh_->getParam("/hyq/verbose", verbose);
+
     res.ack = true;
 
     for(unsigned int i = 0; i < req.data.size(); i++)
@@ -242,22 +262,17 @@ void Controller::update(const ros::Time& time, const ros::Duration& period)
     
    
     // Write to the hardware interface
+    //(NB this is not the convention
+    //of ros but the convention of robcogen  that we define in ros_impedance_controller_XX.yaml!!!!
     for (unsigned int i = 0; i < joint_states_.size(); i++)
     {      
         //compute PID
-//        pids_[i].setGains(joint_p_gain_[i],joint_i_gain_[i],joint_d_gain_[i],0,0);
-//        des_joint_efforts_pids_(i) = pids_[i].computeCommand(des_joint_positions_(i)-joint_states_[i].getPosition(),
-//                                                             des_joint_velocities_(i)-joint_states_[i].getVelocity(),
-//                                                             period);
-
         des_joint_efforts_pids_(i) = joint_p_gain_[i]*(des_joint_positions_(i)-joint_states_[i].getPosition()) +
                                      joint_d_gain_[i]*(des_joint_velocities_(i)-joint_states_[i].getVelocity());
         //add PID + FFWD
         joint_states_[i].setCommand(des_joint_efforts_(i) +  des_joint_efforts_pids_(i));
-                
+
     }
-
-
     //publish hyq pose for the mapper node
     geometry_msgs::PoseWithCovarianceStamped pose_msg;
     pose_msg.header.stamp =ros::Time::now();
@@ -271,6 +286,80 @@ void Controller::update(const ros::Time& time, const ros::Duration& period)
     pose_msg.pose.pose.orientation.z = q_base.z();
     pose_pub_.publish(pose_msg);
 
+    //get virtual foot switch
+
+//    std::vector<gazebo::physics::LinkPtr> lowerleg_link(4);
+//    lowerleg_link[0] = sim_model_->GetLink("lf_lowerleg");
+//    lowerleg_link[1] = sim_model_->GetLink("rf_lowerleg");
+//    lowerleg_link[2] = sim_model_->GetLink("lh_lowerleg");
+//    lowerleg_link[3] = sim_model_->GetLink("rh_lowerleg");
+
+//     for (int n = 0; n < foot_sensors_.size(); n++) {
+//            gazebo::msgs::Contacts contacts;
+//            contacts = foot_sensors_[n]->Contacts();
+
+//        //the wrench is in the last link where the foot is lumped that is the lowerleg! so it is expressed in the lowerleg
+//        //map from lowerleg frame to world
+//        gazebo::math::Pose link_pose = lowerleg_link[n]->GetWorldPose();
+//        gazebo::math::Vector3 forceW = link_pose.rot.RotateVector(
+//                                      gazebo::math::Vector3( contacts.contact(0).wrench(0).body_1_wrench().force().x(),
+//                                                            contacts.contact(0).wrench(0).body_1_wrench().force().y(),
+//                                                                contacts.contact(0).wrench(0).body_1_wrench().force().z()));
+
+
+//        //these forces are in the world frame!
+//        force_[n][0] = forceW.x;
+//        force_[n][1] = forceW.y;
+//        force_[n][2] = forceW.z;
+//        //std::cout<<"force :"<<force_[n][0]<<"  "<< force_[n][1]<<"  "<< force_[n][2] <<std::endl;
+
+//        //the noraml is already in the world!!!
+//        normal_[n][0]  = contacts.contact(0).normal(0).x();
+//        normal_[n][1]  = contacts.contact(0).normal(0).y();
+//        normal_[n][2]  = contacts.contact(0).normal(0).z();
+//        //std::cout<<"normal :"<<normal.transpose()<<std::endl;
+//    } else {
+//        contact_[n] = false;
+//        force_[n][0]=0.0;
+//        force_[n][1]=0.0;
+//        force_[n][2]=0.0;}
+//    }
+
+//    //publish contactstate
+//    std::vector<gazebo_msgs::ContactState> contacts_state(4);
+//    std::vector<geometry_msgs::Wrench> tmp_wrench(1);
+//    std::vector<geometry_msgs::Vector3> tmp_normal(1);
+//    std::vector<double> tmp_contact_bool(1);
+//    contacts_state[0].info = "LF";
+//    contacts_state[1].info = "RF";
+//    contacts_state[2].info = "LH";
+//    contacts_state[3].info = "RH";
+
+//    for (int leg = 0; leg < 4; leg++)
+//    {
+//            tmp_wrench[0].force.x = force_[leg][0];
+//            tmp_wrench[0].force.y = force_[leg][1];
+//            tmp_wrench[0].force.z = force_[leg][2];
+//            contacts_state[leg].wrenches = tmp_wrench;
+
+//            tmp_normal[0].x = normal_[leg][0];
+//            tmp_normal[0].y = normal_[leg][1];
+//            tmp_normal[0].z = normal_[leg][2];
+//            contacts_state[leg].contact_normals = tmp_normal;
+
+//            tmp_contact_bool[0] = (double)contact_[leg];
+//            contacts_state[leg].depths = tmp_contact_bool;
+//     }
+
+//        contact_state_pub_->msg_.states = contacts_state;
+//        contact_state_pub_->msg_.header.stamp = ros::Time::now();
+//
+    std::vector<gazebo_msgs::ContactState> contacts_message(4);
+    gazebo_msgs::ContactsState msg;
+    msg.states = contacts_message;
+    msg.header.stamp = ros::Time::now();
+
+    contact_state_pub_.publish(msg);
 }
 
 
