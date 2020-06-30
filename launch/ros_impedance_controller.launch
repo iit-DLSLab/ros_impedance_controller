@@ -29,10 +29,10 @@
         <node name="ros_impedance_controller" pkg="controller_manager" type="spawner" respawn="false"
                 output="screen" ns="/$(arg robot_name)" args="joint_state_publisher ros_impedance_controller"/>
 
-		<!-- convert joint states to TF transforms for rviz, etc -->
-                <node name="robot_state_publisher_for_rviz" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
-			<remap from="/joint_states" to="/$(arg robot_name)/joint_states"/> 
-		</node>
+	<!-- convert joint states to TF transforms for rviz, etc -->
+        <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+		<remap from="/joint_states" to="/$(arg robot_name)/joint_states"/> 
+	</node>
 
         <!-- run rviz -->
         <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_conf) -f world" if="$(arg rviz)"/>

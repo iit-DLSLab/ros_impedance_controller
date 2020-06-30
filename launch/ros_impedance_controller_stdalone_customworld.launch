@@ -61,9 +61,9 @@
 
         <!-- rviz stuff -->
         <!-- 7 load robot_state_publisher: converts joint states to TF transforms, it is just for rviz, etc -->
-        <node name="robot_state_publisher_for_rviz" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
-            <remap from="/joint_states" to="/$(arg robot_name)/joint_states"/>
-        </node>
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+		<remap from="/joint_states" to="/$(arg robot_name)/joint_states"/> 
+	</node>
 
         <!-- 8 run rviz -->
         <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_conf) -f world" if="$(arg rviz)"/>
