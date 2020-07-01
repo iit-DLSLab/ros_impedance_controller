@@ -7,7 +7,6 @@
 
 #include <ros_impedance_controller/controller.h>
 
-#include <gazebo/sensors/SensorManager.hh>
 namespace ros_impedance_controller {
 
 
@@ -104,23 +103,21 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
     des_joint_efforts_pids_.resize(joint_states_.size());
     des_joint_efforts_.fill(0.0);
 
-
+//contact sensor TODO
     //foot switch
-    foot_sensors_.resize(4);
-    std::vector<std::string> foot_sensor_names(4);
-    foot_sensor_names[0] = std::string("lf_foot_contact_sensor");
-    foot_sensor_names[1] = std::string("rf_foot_contact_sensor");
-    foot_sensor_names[2] = std::string("lh_foot_contact_sensor");
-    foot_sensor_names[3] = std::string("rh_foot_contact_sensor");
-
-
-    for (int n = 0; n < foot_sensors_.size(); n++) {
-        foot_sensors_[n] = std::dynamic_pointer_cast<gazebo::sensors::ContactSensor>
-                (gazebo::sensors::SensorManager::Instance()->GetSensor(foot_sensor_names[n]));
-        if (!this->foot_sensors_[n]) 	{
-            ROS_ERROR_STREAM("Could not find foot sensor \"" << foot_sensor_names[n] << "\".");
-        }
-    }
+//    foot_sensors_.resize(4);
+//    std::vector<std::string> foot_sensor_names(4);
+//    foot_sensor_names[0] = std::string("lf_foot_contact_sensor");
+//    foot_sensor_names[1] = std::string("rf_foot_contact_sensor");
+//    foot_sensor_names[2] = std::string("lh_foot_contact_sensor");
+//    foot_sensor_names[3] = std::string("rh_foot_contact_sensor");
+//    for (int n = 0; n < foot_sensors_.size(); n++) {
+//        foot_sensors_[n] = std::dynamic_pointer_cast<gazebo::sensors::ContactSensor>
+//                (gazebo::sensors::SensorManager::Instance()->GetSensor(foot_sensor_names[n]));
+//        if (!this->foot_sensors_[n]) 	{
+//            ROS_ERROR_STREAM("Could not find foot sensor \"" << foot_sensor_names[n] << "\".");
+//        }
+//    }
 
     // Create the subscriber
     sub_ = root_nh.subscribe("command", 1, &Controller::commandCallback, this);

@@ -37,7 +37,7 @@ catkin_package(
 
 )
 
-message("AAA"  ${GAZEBO_INCLUDE_DIRS})
+
 ###########
 ## Build ##
 ###########

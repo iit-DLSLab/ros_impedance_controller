@@ -25,7 +25,9 @@
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <gazebo_msgs/ContactsState.h>
 
-#include <gazebo/sensors/ContactSensor.hh>
+//TODO contact sensor
+//#include <gazebo/sensors/SensorManager.hh>
+//#include <gazebo/sensors/ContactSensor.hh>
 
 namespace ros_impedance_controller
 {
@@ -103,8 +105,8 @@ private:
     Eigen::VectorXd des_joint_efforts_pids_;
     tf::Quaternion q_base;
     tf::Vector3 base_pos_w;
-
-    std::vector<std::shared_ptr<gazebo::sensors::ContactSensor> > foot_sensors_;
+    //TODO contact state
+    //std::vector<std::shared_ptr<gazebo::sensors::ContactSensor> > foot_sensors_;
     std::vector<std::vector<double> > force_;
     std::vector<std::vector<double> > torque_;
     std::vector<std::vector<double> > normal_;
