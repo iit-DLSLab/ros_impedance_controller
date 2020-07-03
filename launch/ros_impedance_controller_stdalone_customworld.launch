@@ -3,6 +3,7 @@
 	<arg name="robot_name" default="hyq" />
         <arg name="only_torque" default="false" />
         <arg name="rviz" default="true" />
+        <arg name="gui" default="false" />
         <arg name="rviz_conf" default="$(find ros_impedance_controller)/config/operator.rviz"/>
         <arg name="use_custom_world" default="false"/>
         <arg name="world_name" default="custom.world"/>
@@ -19,7 +20,7 @@
         <!-- Set use_sim_time flag -->
         <param name="/use_sim_time" value="true" />
         <arg name="paused" default="false"/>
-        <arg name="gui" default="true"/>
+        <arg name="gui" default="false"/>
         <arg name="headless" default="false"/>
         <arg name="debug" default="false"/>
 
@@ -35,7 +36,9 @@
                 args="$(arg command_arg1) $(arg command_arg2) $(arg full_world_name) --verbose" />
 
         <!-- 2 Start gazebo client -->
-        <node name="gazebo_gui" pkg="gazebo_ros" type="gzclient" respawn="false" output="screen"/>
+        <group if="$(arg gui)">
+             <node name="gazebo_gui" pkg="gazebo_ros" type="gzclient" respawn="false" output="screen"/>
+        </group>
 
 
         <!-- 3 - load the robot URDF into param server (this will have to contain ros_control plugin and transmissions) -->

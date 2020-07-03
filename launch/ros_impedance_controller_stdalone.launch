@@ -3,6 +3,7 @@
 	<arg name="robot_name" default="hyq" />
         <arg name="only_torque" default="false" />
         <arg name="rviz" default="true" />
+        <arg name="gui" default="false" />
         <arg name="rviz_conf" default="$(find ros_impedance_controller)/config/operator.rviz"/>
 
         <!-- load robot name into param server-->
@@ -12,7 +13,7 @@
         <include file="$(find gazebo_ros)/launch/empty_world.launch" >
                 <arg name="paused" default="false" />
                 <arg name="use_sim_time" default="true" />
-                <arg name="gui" default="true" />
+                <arg name="gui" value="$(arg gui)" />
                 <arg name="headless" default="false" />
                 <arg name="debug" default="false" />
                 <arg name="verbose" value="true" />
