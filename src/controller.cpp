@@ -9,6 +9,12 @@
 
 namespace ros_impedance_controller {
 
+const std::string red("\033[0;31m");
+const std::string green("\033[1;32m");
+const std::string yellow("\033[1;33m");
+const std::string cyan("\033[0;36m");
+const std::string magenta("\033[0;35m");
+const std::string reset("\033[0m");
 
 Controller::Controller()
 {
@@ -24,7 +30,7 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
                       ros::NodeHandle& controller_nh)
 {
     // getting the names of the joints from the ROS parameter server
-    ROS_DEBUG("Initialize Controller");
+    std::cout<< red<< "Initialize Ros Impedance Controller framework independent" << reset <<std::endl;
     root_nh_ = &root_nh;
     assert(robot_hw);
 
@@ -138,8 +144,6 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
     pose_pub_ =  controller_nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/"+robot_name + "/pose", 1);
     contact_state_pub_ =  controller_nh.advertise<gazebo_msgs::ContactsState>("/"+robot_name + "/contacts_state", 1);
 
-    //get params from parameter server
-    root_nh_->getParam("/verbose", verbose);
 
     return true;
 }
@@ -159,8 +163,7 @@ bool Controller::setPidsCallback(set_pids::Request& req,
                                  set_pids::Response& res)
 {
     //get params from parameter server
-    root_nh_->getParam("/hyq/verbose", verbose);
-
+    root_nh_->getParam("/verbose", verbose);
     res.ack = true;
 
     for(unsigned int i = 0; i < req.data.size(); i++)
@@ -172,7 +175,7 @@ bool Controller::setPidsCallback(set_pids::Request& req,
                 {
                     joint_p_gain_[j] = req.data[i].p_value;
                     if (verbose)
-                        ROS_INFO_STREAM("Set P gain for joint "<< joint_names_[j] << " to: "<<joint_p_gain_[j]);
+                        std::cout<<"Set P gain for joint "<< joint_names_[j] << " to: "<<joint_p_gain_[j]<<std::endl;
                 }
                 else
                 {
@@ -184,7 +187,7 @@ bool Controller::setPidsCallback(set_pids::Request& req,
                 {
                     joint_i_gain_[j] = req.data[i].i_value;
                     if (verbose)
-                        ROS_INFO_STREAM("Set I gain for joint "<< joint_names_[j] << "to: "<<joint_i_gain_[j]);
+                       std::cout<<"Set I gain for joint "<< joint_names_[j] << " to: "<<joint_i_gain_[j]<<std::endl;
                 }
                 else
                 {
@@ -196,7 +199,7 @@ bool Controller::setPidsCallback(set_pids::Request& req,
                 {
                     joint_d_gain_[j] = req.data[i].d_value;
                     if (verbose)
-                        ROS_INFO_STREAM("Set D gain for joint "<< joint_names_[j] << "to: "<<joint_d_gain_[j]);
+                       std::cout<<"Set D gain for joint "<< joint_names_[j] << " to: "<<joint_d_gain_[j]<<std::endl;
                 }
                 else
                 {
