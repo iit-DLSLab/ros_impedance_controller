@@ -133,7 +133,7 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
     controller_nh.getParam("robot_name", robot_name);
 
 
-    gt_sub_ = controller_nh.subscribe("/"+robot_name + "/ground_truth", 100, &Controller::baseGroundTruthCB, this);
+    gt_sub_ = controller_nh.subscribe("/"+robot_name + "/ground_truth", 1, &Controller::baseGroundTruthCB, this);
 
 
 
@@ -233,8 +233,7 @@ void Controller::baseGroundTruthCB(const nav_msgs::OdometryConstPtr &msg)
 {
 
     static tf::TransformBroadcaster br;
-    tf::Transform b_transform_w;
-
+    tf::Transform w_transform_b;
 
     //orientation of base frame
     q_base.setX(msg->pose.pose.orientation.x);
@@ -249,18 +248,20 @@ void Controller::baseGroundTruthCB(const nav_msgs::OdometryConstPtr &msg)
     tf::Vector3 world_origin_w(-msg->pose.pose.position.x,-msg->pose.pose.position.y,-msg->pose.pose.position.z);
     tf::Vector3 world_origin_b = tf::quatRotate(q_base.inverse(), world_origin_w);
 
-    b_transform_w.setRotation(q_base.inverse());
-    b_transform_w.setOrigin(world_origin_b);
-    br.sendTransform(tf::StampedTransform(b_transform_w, ros::Time::now(), "/base_link", "/world" ));
+    //this is the transform from base to world to publish the world transform for rviz
+    w_transform_b.setRotation(q_base.inverse());
+    w_transform_b.setOrigin(world_origin_b);
+    br.sendTransform(tf::StampedTransform(w_transform_b, ros::Time::now(), "/base_link", "/world" ));
 }
 
 void Controller::update(const ros::Time& time, const ros::Duration& period)
 {
-    ROS_DEBUG_STREAM("des_joint_efforts_: " << des_joint_efforts_.transpose());
-    ROS_DEBUG_STREAM("des_joint_velocities_: " << des_joint_velocities_.transpose());
-    ROS_DEBUG_STREAM("des_joint_positions_: " << des_joint_positions_.transpose());
-    
-   
+
+//    std::cout<<"des_joint_efforts_: " << des_joint_efforts_.transpose()<<std::endl;
+//    std::cout<<"des_joint_velocities_: " << des_joint_velocities_.transpose()<<std::endl;
+//    std::cout<<"des_joint_positions_: " << des_joint_positions_.transpose()<<std::endl;
+
+
     // Write to the hardware interface
     //(NB this is not the convention
     //of ros but the convention of robcogen  that we define in ros_impedance_controller_XX.yaml!!!!
@@ -271,8 +272,10 @@ void Controller::update(const ros::Time& time, const ros::Duration& period)
                                      joint_d_gain_[i]*(des_joint_velocities_(i)-joint_states_[i].getVelocity());
         //add PID + FFWD
         joint_states_[i].setCommand(des_joint_efforts_(i) +  des_joint_efforts_pids_(i));
-
+        //std::cout<<"DEBUG: joint effort joint " <<i <<"   " <<joint_states_[i].getEffort()<<std::endl;
     }
+
+
     //publish hyq pose for the mapper node
     geometry_msgs::PoseWithCovarianceStamped pose_msg;
     pose_msg.header.stamp =ros::Time::now();
