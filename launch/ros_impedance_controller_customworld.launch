@@ -43,7 +43,7 @@
 
         <!-- 3 - load the robot URDF into param server (this will have to contain ros_control plugin and transmissions) -->
         <!-- to set the task_period  you need to regenerate the urdf-->
-        <param name="robot_description" textfile="$(find ros_impedance_controller)/config/hyq.urdf" />
+        <param name="robot_description" textfile="$(env LOCOSIM_DIR)/robot_urdf/hyq.urdf" />
 
         <!-- 4 Spawn a robot into Gazebo -->
         <node name="spawn_hyq_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model hyq -z 1.0"/>
