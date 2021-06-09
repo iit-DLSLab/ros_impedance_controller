@@ -130,19 +130,20 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
 
     //subscriber to the ground truth
     std::string robot_name = "hyq";
-    controller_nh.getParam("robot_name", robot_name);
+    ros::NodeHandle param_node;
+    param_node.getParam("/robot_name", robot_name);
 
-
-    gt_sub_ = controller_nh.subscribe("/"+robot_name + "/ground_truth", 1, &Controller::baseGroundTruthCB, this);
+    std::cout<<" ROBOT NAME IS : "<< robot_name;
+    gt_sub_ = param_node.subscribe("/"+robot_name + "/ground_truth", 1, &Controller::baseGroundTruthCB, this);
 
 
 
 
     // Create the PID set service
-    set_pids_srv_ = root_nh.advertiseService("/set_pids", &Controller::setPidsCallback, this);
+    set_pids_srv_ = param_node.advertiseService("/set_pids", &Controller::setPidsCallback, this);
 
-    pose_pub_ =  controller_nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/"+robot_name + "/pose", 1);
-    contact_state_pub_ =  controller_nh.advertise<gazebo_msgs::ContactsState>("/"+robot_name + "/contacts_state", 1);
+    pose_pub_ =  param_node.advertise<geometry_msgs::PoseWithCovarianceStamped>("/"+robot_name + "/pose", 1);
+    contact_state_pub_ =  param_node.advertise<gazebo_msgs::ContactsState>("/"+robot_name + "/contacts_state", 1);
 
 
     return true;
