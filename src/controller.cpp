@@ -133,7 +133,7 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
     ros::NodeHandle param_node;
     param_node.getParam("/robot_name", robot_name);
 
-    std::cout<<" ROBOT NAME IS : "<< robot_name;
+    std::cout<< red<< "ROBOT NAME IS : "<< robot_name<<reset <<std::endl;
     gt_sub_ = param_node.subscribe("/"+robot_name + "/ground_truth", 1, &Controller::baseGroundTruthCB, this);
 
 

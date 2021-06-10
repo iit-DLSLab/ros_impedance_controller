@@ -6,30 +6,52 @@
         <arg name="gui" default="true" />
         <arg name="rviz_conf" default="$(find ros_impedance_controller)/config/operator.rviz"/>
 
+        <arg name="world_name" default="/home/mfocchi/ros_ws/install/share/ros_impedance_controller/worlds/solo.world"/>
+	   <arg name="task_period" default="0.0001" />
+
         <!-- load robot name into param server-->
         <param name="robot_name" type="str" value="$(arg robot_name)" />
 
-        <!-- 1 launch gzserver (with empty world)/ gzcclient -->
-        <include file="$(find gazebo_ros)/launch/empty_world.launch" >
-                <arg name="paused" default="false" />
-                <arg name="use_sim_time" default="true" />
-                <arg name="gui" value="$(arg gui)" />
-                <arg name="headless" default="false" />
-                <arg name="debug" default="false" />
-                <arg name="verbose" value="true" />
-        </include>
+ 	<!-- 1 Start gazebo server-->
 
-        <!-- 2 - load the robot URDF into param server (this will have to contain ros_control plugin and transmissions) -->
+        <!-- Set use_sim_time flag -->
+   	<arg name="use_sim_time" default="true"/>
+        <arg name="paused" default="false"/>
+        <arg name="headless" default="false"/>
+        <arg name="debug" default="false"/>
+
+	<!-- Set use_sim_time flag -->
+	<group if="$(arg use_sim_time)">
+		<param name="/use_sim_time" value="true" />
+	</group>
+
+        <!-- Set command arguments -->
+        <arg unless="$(arg paused)" name="command_arg1" value=""/>
+        <arg if="$(arg paused)" name="command_arg1" value="-u"/>
+        <arg unless="$(arg headless)" name="command_arg2" value=""/>
+        <arg if="$(arg headless)" name="command_arg2" value="-r"/>
+        <arg unless="$(arg debug)" name="script_type" value="gzserver"/>
+        <arg if="$(arg debug)" name="script_type" value="debug"/>
+
+        <node name="gazebo" pkg="gazebo_ros" type="$(arg script_type)" respawn="false" output="screen"
+                args="$(arg command_arg1) $(arg command_arg2) $(arg world_name) --verbose" />
+
+        <!-- 2 Start gazebo client -->
+        <group if="$(arg gui)">
+             <node name="gazebo_gui" pkg="gazebo_ros" type="gzclient" respawn="false" output="screen"/>
+        </group>
+
+        <!-- 3 - load the robot URDF into param server (this will have to contain ros_control plugin and transmissions) -->
          <!-- to set the task_period  you need to regenerate the urdf from hyq description by changing <updateRate> of plugin libgazebo_ros_p3d.so-->
        <arg name="internal_wrench" default="false" />
-       <arg name="task_period" default="0.004" />
+     
  	 <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find solo_description)/xacro/solo12.urdf.xacro'
          load_force_sensors:=$(arg internal_wrench) task_period:=$(arg task_period)"/>
 
-        <!-- 3 Spawn a robot into Gazebo -->
-        <node name="spawn_hyq_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model solo12 -z 1.0"/>
+        <!-- 4 Spawn a robot into Gazebo -->
+        <node name="spawn_solo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model solo12 -z 0.5"/>
 
-        <!-- 4 -Loading  controller configurations from YAML file to parameter server -->
+        <!-- 5 -Loading  controller configurations from YAML file to parameter server -->
         <rosparam file="$(find ros_impedance_controller)/config/joint_state_publisher.yaml" ns="/$(arg robot_name)" command="load"/>
 
         <!-- Loading ros_impedance_controller config -->
@@ -40,16 +62,16 @@
            <rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller_pd.yaml" ns="/$(arg robot_name)" command="load"/>
         </group>
 
-         <!-- 5  - Loading the controllers (joint state publisher (install ros-kinetic-joint-state-controller) is necessary for robot_state publisher to compute the TFs) -->
+         <!-- 6  - Loading the controllers (joint state publisher (install ros-kinetic-joint-state-controller) is necessary for robot_state publisher to compute the TFs) -->
         <node name="ros_impedance_controller" pkg="controller_manager" type="spawner" respawn="false"
         output="screen" ns="/$(arg robot_name)" args="joint_state_publisher ros_impedance_controller"/>
 
         <!--  rviz stuff -->
-        <!-- 6- load robot_state_publisher: converts joint states to TF transforms, it is just for rviz, etc -->
+        <!-- 7- load robot_state_publisher: converts joint states to TF transforms, it is just for rviz, etc -->
         <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
 		<remap from="/joint_states" to="/$(arg robot_name)/joint_states"/> 
 	</node>
-        <!-- 7 run rviz -->
+        <!-- 8 run rviz -->
         <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_conf) -f world" if="$(arg rviz)"/>
 </launch>
 
