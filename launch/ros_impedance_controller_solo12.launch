@@ -6,24 +6,29 @@
         <arg name="gui" default="true" />
         <arg name="rviz_conf" default="$(find ros_impedance_controller)/config/operator.rviz"/>
 
-        <arg name="world_name" default="/home/mfocchi/ros_ws/install/share/ros_impedance_controller/worlds/solo.world"/>
-	   <arg name="task_period" default="0.0001" />
+        <arg name="world_name" default="/home/mfocchi/ros_ws/src/locosim/ros_impedance_controller/worlds/solo.world"/>
+	<arg name="task_period" default="0.001" />
 
         <!-- load robot name into param server-->
         <param name="robot_name" type="str" value="$(arg robot_name)" />
 
  	<!-- 1 Start gazebo server-->
+	<arg name="use_sim_time" default="true"/>
 
-        <!-- Set use_sim_time flag -->
-   	<arg name="use_sim_time" default="true"/>
-        <arg name="paused" default="false"/>
-        <arg name="headless" default="false"/>
-        <arg name="debug" default="false"/>
+	<arg name="paused" default="true"/>
 
+	<arg name="headless" default="false"/>
+	<arg name="debug" default="false"/>
+
+
+        
 	<!-- Set use_sim_time flag -->
 	<group if="$(arg use_sim_time)">
 		<param name="/use_sim_time" value="true" />
 	</group>
+
+
+
 
         <!-- Set command arguments -->
         <arg unless="$(arg paused)" name="command_arg1" value=""/>
@@ -49,18 +54,19 @@
          load_force_sensors:=$(arg internal_wrench) task_period:=$(arg task_period)"/>
 
         <!-- 4 Spawn a robot into Gazebo -->
-        <node name="spawn_solo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model solo12 -z 0.5"/>
+        <node name="spawn_solo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model solo12 -z 0.3"/>
+
+
+	<!-- Get robot to 0 position -->
+        <node name="goto0" pkg="solo_description" type="go0" args="1.0"  />
+
 
         <!-- 5 -Loading  controller configurations from YAML file to parameter server -->
         <rosparam file="$(find ros_impedance_controller)/config/joint_state_publisher.yaml" ns="/$(arg robot_name)" command="load"/>
 
         <!-- Loading ros_impedance_controller config -->
-        <group if="$(arg only_torque)">
-           <rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller_only_torques.yaml" ns="/$(arg robot_name)" command="load"/>
-        </group>
-        <group unless="$(arg only_torque)">
-           <rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller_pd.yaml" ns="/$(arg robot_name)" command="load"/>
-        </group>
+        <rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller_pd_solo.yaml" ns="/$(arg robot_name)" command="load"/>
+
 
          <!-- 6  - Loading the controllers (joint state publisher (install ros-kinetic-joint-state-controller) is necessary for robot_state publisher to compute the TFs) -->
         <node name="ros_impedance_controller" pkg="controller_manager" type="spawner" respawn="false"
