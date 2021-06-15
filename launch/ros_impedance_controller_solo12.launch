@@ -6,7 +6,7 @@
         <arg name="gui" default="true" />
         <arg name="rviz_conf" default="$(find ros_impedance_controller)/config/operator.rviz"/>
 
-        <arg name="world_name" default="/home/mfocchi/ros_ws/src/locosim/ros_impedance_controller/worlds/solo.world"/>
+        <arg name="world_name" default="$(find ros_impedance_controller)/worlds/solo.world"/>
 	<arg name="task_period" default="0.001" />
 
         <!-- load robot name into param server-->
