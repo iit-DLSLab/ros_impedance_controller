@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <launch>
-	<arg name="robot_name" default="solo12" />
+	<arg name="robot_name" default="solo" />
         <arg name="only_torque" default="false" />
         <arg name="rviz" default="true" />
         <arg name="gui" default="true" />
@@ -15,7 +15,7 @@
  	<!-- 1 Start gazebo server-->
 	<arg name="use_sim_time" default="true"/>
 
-	<arg name="paused" default="true"/>
+        <arg name="paused" default="true"/>
 
 	<arg name="headless" default="false"/>
 	<arg name="debug" default="false"/>
@@ -50,16 +50,16 @@
          <!-- to set the task_period  you need to regenerate the urdf from hyq description by changing <updateRate> of plugin libgazebo_ros_p3d.so-->
        <arg name="internal_wrench" default="false" />
      
- 	 <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find solo_description)/xacro/solo12.urdf.xacro'
+ 	 <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find solo_description)/robots/solo.urdf.xacro'
          load_force_sensors:=$(arg internal_wrench) task_period:=$(arg task_period)"/>
 
         <!-- 4 Spawn a robot into Gazebo -->
-        <node name="spawn_solo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model solo12 -z 0.3"/>
+        <node name="spawn_solo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model solo -z 0.3"/>
 
 
-	<!-- Get robot to 0 position -->
-        <node name="goto0" pkg="solo_description" type="go0" args="1.0"  />
-
+-	<!-- Get robot to 0 position -->
+-        <node name="goto0" pkg="solo_description" type="go0" args="1.0"  />
+-
 
         <!-- 5 -Loading  controller configurations from YAML file to parameter server -->
         <rosparam file="$(find ros_impedance_controller)/config/joint_state_publisher.yaml" ns="/$(arg robot_name)" command="load"/>
