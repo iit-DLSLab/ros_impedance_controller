@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /RobotModel1
       Splitter Ratio: 0.617816091
     Tree Height: 855
   - Class: rviz/Selection
@@ -51,7 +52,7 @@ Visualization Manager:
       Plane Cell Count: 1000
       Reference Frame: world
       Value: true
-    - Alpha: 0.400000006
+    - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
       Enabled: true
@@ -61,7 +62,21 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
+        back_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        front_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        left_wheel:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -71,17 +86,16 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        lf_hipassembly:
+        lf_hip_assembly:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        lf_lower_leg:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        lf_lowerleg:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        lf_upperleg:
+        lf_upper_leg:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -91,17 +105,16 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        lh_hipassembly:
+        lh_hip_assembly:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        lh_lower_leg:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        lh_lowerleg:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        lh_upperleg:
+        lh_upper_leg:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -111,17 +124,16 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        rf_hipassembly:
+        rf_hip_assembly:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        rf_lower_leg:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        rf_lowerleg:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        rf_upperleg:
+        rf_upper_leg:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -131,17 +143,21 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        rh_hipassembly:
+        rh_hip_assembly:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        rh_lower_leg:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        rh_lowerleg:
+        rh_upper_leg:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        rh_upperleg:
+        right_wheel:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -194,7 +210,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 3.51959276
+      Distance: 2.11068344
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
@@ -209,10 +225,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.309796333
+      Pitch: 0.694795966
       Target Frame: base_link
       Value: Orbit (rviz)
-      Yaw: 4.63612747
+      Yaw: 4.02112675
     Saved:
       - Class: rviz/ThirdPersonFollower
         Distance: 2.60631585

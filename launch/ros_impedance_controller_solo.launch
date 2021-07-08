@@ -7,10 +7,15 @@
         <arg name="rviz_conf" default="$(find ros_impedance_controller)/config/operator.rviz"/>
 
         <arg name="world_name" default="$(find ros_impedance_controller)/worlds/solo.world"/>
+
+
+        <arg name="flywheel" default="true" />
 	<arg name="task_period" default="0.001" />
 
-        <!-- load robot name into param server-->
+        <!-- load robot name into param server for urdf generation-->
         <param name="robot_name" type="str" value="$(arg robot_name)" />
+	<param name="flywheel" type="str" value="$(arg flywheel)" />
+
 
  	<!-- 1 Start gazebo server-->
 	<arg name="use_sim_time" default="true"/>
@@ -26,8 +31,6 @@
 	<group if="$(arg use_sim_time)">
 		<param name="/use_sim_time" value="true" />
 	</group>
-
-
 
 
         <!-- Set command arguments -->
@@ -51,7 +54,7 @@
        <arg name="internal_wrench" default="false" />
      
  	 <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find solo_description)/robots/solo.urdf.xacro'
-         load_force_sensors:=$(arg internal_wrench) task_period:=$(arg task_period)"/>
+         flywheel:=$(arg flywheel) load_force_sensors:=$(arg internal_wrench) task_period:=$(arg task_period)"/>
 
         <!-- 4 Spawn a robot into Gazebo -->
         <node name="spawn_solo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model solo -z 0.3"/>
@@ -64,20 +67,24 @@
         <!-- 5 -Loading  controller configurations from YAML file to parameter server -->
         <rosparam file="$(find ros_impedance_controller)/config/joint_state_publisher.yaml" ns="/$(arg robot_name)" command="load"/>
 
-        <!-- Loading ros_impedance_controller config -->
-        <rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller_pd_solo.yaml" ns="/$(arg robot_name)" command="load"/>
+        <!-- 6 Loading ros_impedance_controller config -->
+        <group if="$(arg flywheel)">
+            <rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller_pd_solo_flywheel.yaml" ns="/$(arg robot_name)" command="load"/>
+        </group>
+        <group unless="$(arg flywheel)">
+            <rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller_pd_solo.yaml" ns="/$(arg robot_name)" command="load"/>
+         </group>
 
-
-         <!-- 6  - Loading the controllers (joint state publisher (install ros-kinetic-joint-state-controller) is necessary for robot_state publisher to compute the TFs) -->
+         <!-- 7  - Loading the controllers (joint state publisher (install ros-kinetic-joint-state-controller) is necessary for robot_state publisher to compute the TFs) -->
         <node name="ros_impedance_controller" pkg="controller_manager" type="spawner" respawn="false"
         output="screen" ns="/$(arg robot_name)" args="joint_state_publisher ros_impedance_controller"/>
 
         <!--  rviz stuff -->
-        <!-- 7- load robot_state_publisher: converts joint states to TF transforms, it is just for rviz, etc -->
+        <!-- 8- load robot_state_publisher: converts joint states to TF transforms, it is just for rviz, etc -->
         <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
 		<remap from="/joint_states" to="/$(arg robot_name)/joint_states"/> 
 	</node>
-        <!-- 8 run rviz -->
+        <!-- 9 run rviz -->
         <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_conf) -f world" if="$(arg rviz)"/>
 </launch>
 
