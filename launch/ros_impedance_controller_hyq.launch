@@ -6,7 +6,10 @@
         <arg name="gui" default="false" />
         <arg name="rviz_conf" default="$(find ros_impedance_controller)/config/operator.rviz"/>
 
+
+	<arg name="task_period" default="0.004" />
 	<arg name="new_gazebo_version" default="false" />
+
         <!-- load robot name into param server-->
         <param name="robot_name" type="str" value="$(arg robot_name)" />
 
@@ -23,7 +26,7 @@
         <!-- 2 - load the robot URDF into param server (this will have to contain ros_control plugin and transmissions) -->
          <!-- to set the task_period  you need to regenerate the urdf from hyq description by changing <updateRate> of plugin libgazebo_ros_p3d.so-->
          <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find hyq_description)/robots/hyq.urdf.xacro'
-         new_gazebo_version:=$(arg new_gazebo_version)  load_force_sensors:=$(arg internal_wrench) task_period:=$(arg task_period)"/>
+         new_gazebo_version:=$(arg new_gazebo_version)  task_period:=$(arg task_period)"/>
 
 
         <!-- 3 Spawn a robot into Gazebo -->
