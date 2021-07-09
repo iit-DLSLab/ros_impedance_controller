@@ -9,9 +9,10 @@
         <arg name="world_name" default="$(find ros_impedance_controller)/worlds/solo.world"/>
 
 
-        <arg name="flywheel" default="true" />
+        <arg name="flywheel" default="false" />
 	<arg name="task_period" default="0.001" />
-
+     	<arg name="new_gazebo_version" default="false" />
+     	
         <!-- load robot name into param server for urdf generation-->
         <param name="robot_name" type="str" value="$(arg robot_name)" />
 	<param name="flywheel" type="str" value="$(arg flywheel)" />
@@ -54,7 +55,7 @@
        <arg name="internal_wrench" default="false" />
      
  	 <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find solo_description)/robots/solo.urdf.xacro'
-         flywheel:=$(arg flywheel) load_force_sensors:=$(arg internal_wrench) task_period:=$(arg task_period)"/>
+         new_gazebo_version:=$(arg new_gazebo_version) flywheel:=$(arg flywheel) load_force_sensors:=$(arg internal_wrench) task_period:=$(arg task_period)"/>
 
         <!-- 4 Spawn a robot into Gazebo -->
         <node name="spawn_solo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model solo -z 0.3"/>
