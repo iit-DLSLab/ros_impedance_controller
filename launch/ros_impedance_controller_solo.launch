@@ -10,6 +10,7 @@
 
 
         <arg name="flywheel" default="false" />
+	<!-- if task_period is smaller than sim max_step_size (in world file) it is clamped to that value!!!!!!-->
 	<arg name="task_period" default="0.001" />
      	<arg name="new_gazebo_version" default="false" />
      	
@@ -50,12 +51,16 @@
              <node name="gazebo_gui" pkg="gazebo_ros" type="gzclient" respawn="false" output="screen"/>
         </group>
 
-        <!-- 3 - load the robot URDF into param server (this will have to contain ros_control plugin and transmissions) -->
+        <!-- 3 - load the robot URDF /SRDF into param server (this will have to contain ros_control plugin and transmissions) -->
          <!-- to set the task_period  you need to regenerate the urdf from hyq description by changing <updateRate> of plugin libgazebo_ros_p3d.so-->
        <arg name="internal_wrench" default="false" />
      
  	 <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find solo_description)/robots/solo.urdf.xacro'
          new_gazebo_version:=$(arg new_gazebo_version) flywheel:=$(arg flywheel) load_force_sensors:=$(arg internal_wrench) task_period:=$(arg task_period)"/>
+
+
+        <!-- send solo semantic description srdf to param server -->
+        <param name="robot_semantic_description" command="$(find xacro)/xacro --inorder '$(find solo_description)/robots/solo.srdf.xacro'" />
 
         <!-- 4 Spawn a robot into Gazebo -->
         <node name="spawn_solo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model solo -z 0.3"/>
