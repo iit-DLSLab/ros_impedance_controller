@@ -7,6 +7,7 @@
 
 #include <ros_impedance_controller/controller.h>
 
+
 namespace ros_impedance_controller {
 
 const std::string red("\033[0;31m");
@@ -33,6 +34,19 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
     std::cout<< red<< "Initialize Ros Impedance Controller framework independent" << reset <<std::endl;
     root_nh_ = &root_nh;
     assert(robot_hw);
+
+//TODO
+//    std::string srdf, urdf;
+//    if(!controller_nh.getParam("/robot_description",urdf))
+//    {
+//        ROS_ERROR_NAMED(CLASS_NAME,"robot_description not available in the ros param server");
+
+//    }
+//    if(!controller_nh.getParam("/robot_semantic_description",srdf))
+//    {
+//        ROS_ERROR_NAMED(CLASS_NAME,"robot_description_semantic not available in the ros param server");
+
+//    }
 
 
     hardware_interface::EffortJointInterface* eff_hw = robot_hw->get<hardware_interface::EffortJointInterface>();
@@ -66,6 +80,18 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
     }
     assert(joint_states_.size()>0);
 
+
+    // Resize the variables
+    des_joint_positions_.resize(joint_states_.size());
+    des_joint_positions_.fill(0.0);
+    des_joint_velocities_.resize(joint_states_.size());
+    des_joint_velocities_.fill(0.0);
+    des_joint_efforts_.resize(joint_states_.size());
+    des_joint_efforts_.fill(0.0);
+    des_joint_efforts_pids_.resize(joint_states_.size());
+    des_joint_efforts_.fill(0.0);
+
+
     joint_p_gain_.resize(joint_states_.size());
     joint_i_gain_.resize(joint_states_.size());
     joint_d_gain_.resize(joint_states_.size());
@@ -97,17 +123,25 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
        ROS_DEBUG("I value for joint %i is: %f",i,joint_i_gain_[i]);
        ROS_DEBUG("D value for joint %i is: %f",i,joint_d_gain_[i]);
 
+      //get statrup go0 position from yaml (TODO srdf)
+       controller_nh.getParam("home/" + joint_names_[i], des_joint_positions_[i]);
+
     }
 
-    // Resize the variables
-    des_joint_positions_.resize(joint_states_.size());
-    des_joint_positions_.fill(0.0);
-    des_joint_velocities_.resize(joint_states_.size());
-    des_joint_velocities_.fill(0.0);
-    des_joint_efforts_.resize(joint_states_.size());
-    des_joint_efforts_.fill(0.0);
-    des_joint_efforts_pids_.resize(joint_states_.size());
-    des_joint_efforts_.fill(0.0);
+
+//TODO
+//    srdf::Model s;
+//    urdf::ModelInterfaceSharedPtr u = urdf::parseURDF(urdf);
+//    s.initString(*u,srdf);
+//    auto group_states = s.getGroupStates();
+
+//    for(unsigned int i=0;i<group_states.size();i++)
+//        if(group_states[i].name_ == "home") // look for the home group state and get the names of the joints in there
+//            for(auto & tmp : group_states[i].joint_values_)
+//                des_joint_positions_.push_back(tmp.second);
+
+
+
 
 //contact sensor TODO
     //foot switch
@@ -153,9 +187,7 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
 void Controller::starting(const ros::Time& time)
 {
     ROS_DEBUG("Starting Controller");
-    des_joint_positions_.fill(0.0);
-    des_joint_velocities_.fill(0.0);
-    des_joint_efforts_.fill(0.0);
+
 }
 
 
@@ -258,6 +290,8 @@ void Controller::baseGroundTruthCB(const nav_msgs::OdometryConstPtr &msg)
 void Controller::update(const ros::Time& time, const ros::Duration& period)
 {
 
+    //if task_period is smaller than sim max_step_size (in world file) period it is clamped to that value!!!!!
+    //std::cout<<period.toSec()<<std::endl;
 //    std::cout<<"des_joint_efforts_: " << des_joint_efforts_.transpose()<<std::endl;
 //    std::cout<<"des_joint_velocities_: " << des_joint_velocities_.transpose()<<std::endl;
 //    std::cout<<"des_joint_positions_: " << des_joint_positions_.transpose()<<std::endl;
