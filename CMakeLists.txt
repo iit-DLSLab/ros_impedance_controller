@@ -17,6 +17,7 @@ add_message_files(
   msg
   FILES
   pid.msg
+  BaseState.msg
 )
 
 add_service_files(

@@ -176,7 +176,8 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
     // Create the PID set service
     set_pids_srv_ = param_node.advertiseService("/set_pids", &Controller::setPidsCallback, this);
 
-    pose_pub_ =  param_node.advertise<geometry_msgs::PoseWithCovarianceStamped>("/"+robot_name + "/pose", 1);
+    //pose_pub_ =  param_node.advertise<geometry_msgs::PoseWithCovarianceStamped>("/"+robot_name + "/pose", 1);
+    pose_pub_ =  param_node.advertise<BaseState>("/"+robot_name + "/base_state", 1);
     contact_state_pub_ =  param_node.advertise<gazebo_msgs::ContactsState>("/"+robot_name + "/contacts_state", 1);
 
 
@@ -276,6 +277,14 @@ void Controller::baseGroundTruthCB(const nav_msgs::OdometryConstPtr &msg)
     //position of base frame
     base_pos_w = tf::Vector3(msg->pose.pose.position.x,msg->pose.pose.position.y,msg->pose.pose.position.z);
 
+    //get twist
+    base_twist_w.linear.x= msg->twist.twist.linear.x;
+    base_twist_w.linear.y = msg->twist.twist.linear.y;
+    base_twist_w.linear.z = msg->twist.twist.linear.z;
+    base_twist_w.angular.x = msg->twist.twist.angular.x;
+    base_twist_w.angular.y = msg->twist.twist.angular.y;
+    base_twist_w.angular.z = msg->twist.twist.angular.z;
+
 
     //the vector of the base is in the world frame, so to apply to the base frame I should rotate it to the base frame before
     tf::Vector3 world_origin_w(-msg->pose.pose.position.x,-msg->pose.pose.position.y,-msg->pose.pose.position.z);
@@ -312,17 +321,24 @@ void Controller::update(const ros::Time& time, const ros::Duration& period)
 
 
     //publish hyq pose for the mapper node
-    geometry_msgs::PoseWithCovarianceStamped pose_msg;
-    pose_msg.header.stamp =ros::Time::now();
-    pose_msg.header.frame_id = "world";
-    pose_msg.pose.pose.position.x = base_pos_w.x();
-    pose_msg.pose.pose.position.y = base_pos_w.y();
-    pose_msg.pose.pose.position.z = base_pos_w.z();
-    pose_msg.pose.pose.orientation.w = q_base.w();
-    pose_msg.pose.pose.orientation.x = q_base.x();
-    pose_msg.pose.pose.orientation.y = q_base.y();
-    pose_msg.pose.pose.orientation.z = q_base.z();
-    pose_pub_.publish(pose_msg);
+      BaseState pose_msg;
+      pose_msg.header.stamp =ros::Time::now();
+      pose_msg.header.frame_id = "world";
+      pose_msg.pose.position.x = base_pos_w.x();
+      pose_msg.pose.position.y = base_pos_w.y();
+      pose_msg.pose.position.z = base_pos_w.z();
+      pose_msg.pose.orientation.w = q_base.w();
+      pose_msg.pose.orientation.x = q_base.x();
+      pose_msg.pose.orientation.y = q_base.y();
+      pose_msg.pose.orientation.z = q_base.z();
+
+      pose_msg.twist.linear.x = base_twist_w.linear.x;
+      pose_msg.twist.linear.y = base_twist_w.linear.y;
+      pose_msg.twist.linear.z = base_twist_w.linear.z;
+      pose_msg.twist.angular.x = base_twist_w.angular.x;
+      pose_msg.twist.angular.y = base_twist_w.angular.y;
+      pose_msg.twist.angular.z = base_twist_w.angular.z;
+      pose_pub_.publish(pose_msg);
 
     //get virtual foot switch
 

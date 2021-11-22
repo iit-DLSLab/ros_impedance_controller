@@ -21,8 +21,8 @@
 
 //map
 #include <tf/transform_broadcaster.h>
-#include <nav_msgs/Odometry.h>
-#include <geometry_msgs/PoseWithCovarianceStamped.h>
+#include <nav_msgs/Odometry.h> //robotname/groudtruth
+#include <ros_impedance_controller/BaseState.h> //robotname/pose
 #include <gazebo_msgs/ContactsState.h>
 
 //TODO contact sensor
@@ -105,6 +105,7 @@ private:
     Eigen::VectorXd des_joint_efforts_pids_;
     tf::Quaternion q_base;
     tf::Vector3 base_pos_w;
+    geometry_msgs::Twist base_twist_w;
     //TODO contact state
     //std::vector<std::shared_ptr<gazebo::sensors::ContactSensor> > foot_sensors_;
     std::vector<std::vector<double> > force_;
