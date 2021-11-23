@@ -168,17 +168,17 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
     param_node.getParam("/robot_name", robot_name);
 
     std::cout<< red<< "ROBOT NAME IS : "<< robot_name<<reset <<std::endl;
-    gt_sub_ = param_node.subscribe("/"+robot_name + "/ground_truth", 1, &Controller::baseGroundTruthCB, this);
-
-
-
-
-    // Create the PID set service
+     // Create the PID set service
     set_pids_srv_ = param_node.advertiseService("/set_pids", &Controller::setPidsCallback, this);
 
-    //pose_pub_ =  param_node.advertise<geometry_msgs::PoseWithCovarianceStamped>("/"+robot_name + "/pose", 1);
-    pose_pub_ =  param_node.advertise<BaseState>("/"+robot_name + "/base_state", 1);
-    contact_state_pub_ =  param_node.advertise<gazebo_msgs::ContactsState>("/"+robot_name + "/contacts_state", 1);
+
+    gt_sub_ = param_node.subscribe("/"+robot_name + "/ground_truth", 1, &Controller::baseGroundTruthCB, this, ros::TransportHints().tcpNoDelay());
+
+
+
+    //rt publisher (uncomment if you need them)
+    //pose_pub_rt_.reset(new realtime_tools::RealtimePublisher<BaseState>(param_node, "/"+robot_name + "/base_state", 1));
+    //contact_state_pub_rt_.reset(new realtime_tools::RealtimePublisher<gazebo_msgs::ContactsState>(param_node, "/"+robot_name + "/contacts_state", 1));
 
 
     return true;
@@ -320,25 +320,31 @@ void Controller::update(const ros::Time& time, const ros::Duration& period)
     }
 
 
-    //publish hyq pose for the mapper node
-      BaseState pose_msg;
-      pose_msg.header.stamp =ros::Time::now();
-      pose_msg.header.frame_id = "world";
-      pose_msg.pose.position.x = base_pos_w.x();
-      pose_msg.pose.position.y = base_pos_w.y();
-      pose_msg.pose.position.z = base_pos_w.z();
-      pose_msg.pose.orientation.w = q_base.w();
-      pose_msg.pose.orientation.x = q_base.x();
-      pose_msg.pose.orientation.y = q_base.y();
-      pose_msg.pose.orientation.z = q_base.z();
+      //publish hyq pose for the mapper node
+      //uncomment if you want to use BaseState message instead than /solo/groundtruth in python
+//      BaseState pose_msg;
+//      pose_msg.header.stamp =ros::Time::now();
+//      pose_msg.header.frame_id = "world";
+//      pose_msg.pose.position.x = base_pos_w.x();
+//      pose_msg.pose.position.y = base_pos_w.y();
+//      pose_msg.pose.position.z = base_pos_w.z();
+//      pose_msg.pose.orientation.w = q_base.w();
+//      pose_msg.pose.orientation.x = q_base.x();
+//      pose_msg.pose.orientation.y = q_base.y();
+//      pose_msg.pose.orientation.z = q_base.z();
 
-      pose_msg.twist.linear.x = base_twist_w.linear.x;
-      pose_msg.twist.linear.y = base_twist_w.linear.y;
-      pose_msg.twist.linear.z = base_twist_w.linear.z;
-      pose_msg.twist.angular.x = base_twist_w.angular.x;
-      pose_msg.twist.angular.y = base_twist_w.angular.y;
-      pose_msg.twist.angular.z = base_twist_w.angular.z;
-      pose_pub_.publish(pose_msg);
+//      pose_msg.twist.linear.x = base_twist_w.linear.x;
+//      pose_msg.twist.linear.y = base_twist_w.linear.y;
+//      pose_msg.twist.linear.z = base_twist_w.linear.z;
+//      pose_msg.twist.angular.x = base_twist_w.angular.x;
+//      pose_msg.twist.angular.y = base_twist_w.angular.y;
+//      pose_msg.twist.angular.z = base_twist_w.angular.z;
+
+
+//      if (pose_pub_rt_->trylock()){
+//        pose_pub_rt_->msg_ = pose_msg;
+//        pose_pub_rt_->unlockAndPublish();
+//      }
 
     //get virtual foot switch
 
@@ -409,11 +415,14 @@ void Controller::update(const ros::Time& time, const ros::Duration& period)
 //        contact_state_pub_->msg_.header.stamp = ros::Time::now();
 //
     std::vector<gazebo_msgs::ContactState> contacts_message(4);
-    gazebo_msgs::ContactsState msg;
-    msg.states = contacts_message;
-    msg.header.stamp = ros::Time::now();
-
-    contact_state_pub_.publish(msg);
+    gazebo_msgs::ContactsState contact_msg;
+    contact_msg.states = contacts_message;
+    contact_msg.header.stamp = ros::Time::now();
+    //uncomment if you want to subscribe to the ground truth in python receivecontact
+//    if (contact_state_pub_rt_->trylock()){
+//      contact_state_pub_rt_->msg_ = contact_msg;
+//      contact_state_pub_rt_->unlockAndPublish();
+//    }
 }
 
 

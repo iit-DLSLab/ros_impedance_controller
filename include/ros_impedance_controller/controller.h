@@ -29,6 +29,8 @@
 //#include <gazebo/sensors/SensorManager.hh>
 //#include <gazebo/sensors/ContactSensor.hh>
 
+#include <realtime_tools/realtime_publisher.h>
+
 namespace ros_impedance_controller
 {
 
@@ -81,8 +83,9 @@ private:
     ros::ServiceServer set_pids_srv_;
     ros::ServiceServer get_map_srv_;
 
-    ros::Publisher pose_pub_;
-    ros::Publisher contact_state_pub_;
+    std::shared_ptr<realtime_tools::RealtimePublisher<BaseState>> pose_pub_rt_;
+    std::shared_ptr<realtime_tools::RealtimePublisher<gazebo_msgs::ContactsState>> contact_state_pub_rt_;
+
     /** @brief Number of joints */
     unsigned int num_joints_;
     /** @brief Joint names */
