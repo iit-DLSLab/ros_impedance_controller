@@ -1,7 +1,6 @@
 <?xml version="1.0" ?>
 <launch>
 	<arg name="robot_name" default="solo" />
-        <arg name="only_torque" default="false" />
         <arg name="rviz" default="true" />
         <arg name="gui" default="true" />
         <arg name="rviz_conf" default="$(find ros_impedance_controller)/config/operator.rviz"/>
@@ -75,10 +74,10 @@
 
         <!-- 6 Loading ros_impedance_controller config -->
         <group if="$(arg flywheel)">
-            <rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller_pd_solo_flywheel.yaml" ns="/$(arg robot_name)" command="load"/>
+            <rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller_solo_flywheel.yaml" ns="/$(arg robot_name)" command="load"/>
         </group>
         <group unless="$(arg flywheel)">
-            <rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller_pd_solo.yaml" ns="/$(arg robot_name)" command="load"/>
+            <rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller_solo.yaml" ns="/$(arg robot_name)" command="load"/>
          </group>
 
          <!-- 7  - Loading the controllers (joint state publisher (install ros-kinetic-joint-state-controller) is necessary for robot_state publisher to compute the TFs) -->
