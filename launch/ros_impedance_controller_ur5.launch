@@ -8,28 +8,40 @@
 	<arg name="gazebo" value="true" />
 	<arg name="gazebo_world" default="worlds/empty.world" doc="The '.world' file to load in Gazebo." />
 	<arg name="spawn_z" value="1.1" />
-        <arg name="transmission_hw_interface" default="hardware_interface/EffortJointInterface" />
-
-
+        <arg name="torque_control" value="false" />
+ 
 
         <!-- load robot name into param server-->
         <param name="robot_name" type="str" value="$(arg robot_name)" />
         <param name="spawn_z" type="double" value="$(arg spawn_z)" />
+ 	<param name="torque_control" type="bool" value="$(arg torque_control)" />
 
          <!-- 1 - load the robot URDF as robot_description into param server (this will have to contain ros_control plugin and transmissions) -->
           <arg name="joint_limit_params" default="$(find ur_description)/config/ur5e/joint_limits.yaml"/>
           <arg name="kinematics_params" default="$(find ur_description)/config/ur5e/default_kinematics.yaml"/>
           <arg name="physical_params" default="$(find ur_description)/config/ur5e/physical_parameters.yaml"/>
           <arg name="visual_params" default="$(find ur_description)/config/ur5e/visual_parameters.yaml"/>
-
-          <include file="$(find ur_description)/launch/load_ur5e.launch">
+      
+	<group if="$(arg torque_control)">
+	  <include file="$(find ur_description)/launch/load_ur5e.launch">
+		    <arg name="gazebo" value="$(arg gazebo)" />
+		    <arg name="joint_limit_params" value="$(arg joint_limit_params)"/>
+		    <arg name="kinematics_params" value="$(arg kinematics_params)"/>
+		    <arg name="physical_params" value="$(arg physical_params)"/>
+		    <arg name="visual_params" value="$(arg visual_params)"/>
+	     	    <arg name="transmission_hw_interface" value="hardware_interface/EffortJointInterface"/>
+		  </include>
+        </group>
+  	<group unless="$(arg torque_control)">
+         <include file="$(find ur_description)/launch/load_ur5e.launch">
             <arg name="gazebo" value="$(arg gazebo)" />
             <arg name="joint_limit_params" value="$(arg joint_limit_params)"/>
             <arg name="kinematics_params" value="$(arg kinematics_params)"/>
             <arg name="physical_params" value="$(arg physical_params)"/>
             <arg name="visual_params" value="$(arg visual_params)"/>
-     	    <arg name="transmission_hw_interface" value="$(arg transmission_hw_interface)"/>
+     	    <arg name="transmission_hw_interface" value="hardware_interface/PositionJointInterface"/>
           </include>
+        </group>
 
      	<!-- 2 launch gzserver (with empty world)/ gzcclient: Starts Gazebo and load the empty world if requested to do so - -->
         <include file="$(find gazebo_ros)/launch/empty_world.launch" >
@@ -53,7 +65,7 @@
 
         <!-- 5  - Loading the controllers (joint state publisher (install ros-kinetic-joint-state-controller) is necessary for robot_state publisher to compute the TFs) -->
         <node name="ros_impedance_controller" pkg="controller_manager" type="spawner" respawn="false"
-        output="screen" ns="/$(arg robot_name)"  args="joint_state_publisher ros_impedance_controller"/>
+        output="screen" ns="/$(arg robot_name)"  args="joint_state_publisher joint_group_pos_controller"/>
 
         <!--  rviz stuff -->
         <!-- 6- load robot_state_publisher: converts joint states to TF transforms, it is just for rviz, etc -->
