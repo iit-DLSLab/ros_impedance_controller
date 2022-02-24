@@ -8,6 +8,9 @@
 	<arg name="gazebo" value="true" />
 	<arg name="gazebo_world" default="worlds/empty.world" doc="The '.world' file to load in Gazebo." />
 	<arg name="spawn_z" value="1.1" />
+        <arg name="transmission_hw_interface" default="hardware_interface/EffortJointInterface" />
+
+
 
         <!-- load robot name into param server-->
         <param name="robot_name" type="str" value="$(arg robot_name)" />
@@ -18,12 +21,14 @@
           <arg name="kinematics_params" default="$(find ur_description)/config/ur5e/default_kinematics.yaml"/>
           <arg name="physical_params" default="$(find ur_description)/config/ur5e/physical_parameters.yaml"/>
           <arg name="visual_params" default="$(find ur_description)/config/ur5e/visual_parameters.yaml"/>
+
           <include file="$(find ur_description)/launch/load_ur5e.launch">
             <arg name="gazebo" value="$(arg gazebo)" />
             <arg name="joint_limit_params" value="$(arg joint_limit_params)"/>
             <arg name="kinematics_params" value="$(arg kinematics_params)"/>
             <arg name="physical_params" value="$(arg physical_params)"/>
             <arg name="visual_params" value="$(arg visual_params)"/>
+     	    <arg name="transmission_hw_interface" value="$(arg transmission_hw_interface)"/>
           </include>
 
      	<!-- 2 launch gzserver (with empty world)/ gzcclient: Starts Gazebo and load the empty world if requested to do so - -->
@@ -41,9 +46,10 @@
         <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model ur5 -z $(arg spawn_z)"/>
 
 	<!-- 4 -Loading  controllers settings -->
+	<rosparam file="$(find ur_description)/config/ur5e/ur5e_controllers.yaml" ns="/$(arg robot_name)" command="load"/>
 	<rosparam file="$(find ros_impedance_controller)/config/joint_state_publisher.yaml" ns="/$(arg robot_name)" command="load"/> 		
 	<rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller_ur5.yaml" ns="/$(arg robot_name)" command="load"/>>
-	<rosparam file="$(find ur_description)/config/ur5e/ur5e_controllers.yaml" ns="/$(arg robot_name)" command="load"/>
+
 
         <!-- 5  - Loading the controllers (joint state publisher (install ros-kinetic-joint-state-controller) is necessary for robot_state publisher to compute the TFs) -->
         <node name="ros_impedance_controller" pkg="controller_manager" type="spawner" respawn="false"
