@@ -61,20 +61,25 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
     {
         ROS_ERROR("No joints given in the namespace: %s.", controller_nh.getNamespace().c_str());
         return false;
+    } else
+    {
+         std::cout<< green<< "Found  " <<joint_names_.size()<< " joints"<< reset <<std::endl;
     }
 
-    // Setting up handles:
-    for (unsigned int i = 0; i < joint_names_.size(); i++)
+     // Setting up handles:
+    for ( int i = 0; i < joint_names_.size(); i++)
     {
+
         // Getting joint state handle
         try
         {
-            ROS_DEBUG_STREAM("Found joint: "<<joint_names_[i]);
+            std::cout<< green<< "Loading effort interface for joint " <<joint_names_[i]<< reset <<std::endl;
             joint_states_.push_back(eff_hw->getHandle(joint_names_[i]));
+
         }
         catch(...)
         {
-            ROS_ERROR("Error loading joint_states_");
+            ROS_ERROR("Error loading the effort interfaces");
             return false;
         }
     }
