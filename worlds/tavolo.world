@@ -18,7 +18,7 @@
     <include>
       <name>tavolo</name>
       <uri>model://tavolo</uri>
-      <pose>-2.0 -0.5 0.0 0 0 0</pose>
+      <pose>0.0 0.0 0.0 0 0 0</pose>
     </include>
   </world>
 </sdf>
