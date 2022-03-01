@@ -10,18 +10,15 @@
  	<arg name="position_controllers" value="joint_group_pos_controller" />
 	<arg name="torque_controllers" value="ros_impedance_controller" />
 
-	<arg name="spawn_x" value="0.5" />
-	<arg name="spawn_y" value="0.35" />
-	<arg name="spawn_z" value="1.8" />
-        <arg name="use_torque_control" value="false" />
+	<arg name="spawn_x" default="0.5" />
+	<arg name="spawn_y" default="0.35" />
+	<arg name="spawn_z" default="1.8" />
+        <arg name="use_torque_control" default="false" />
  	<arg name="gazebo" value="true" />
 
         <!-- load robot name into param server-->
         <param name="robot_name" type="str" value="$(arg robot_name)" />
-	<param name="spawn_x" type="double" value="$(arg spawn_x)" />
-	<param name="spawn_y" type="double" value="$(arg spawn_y)" />
-        <param name="spawn_z" type="double" value="$(arg spawn_z)" />
- 	<param name="use_torque_control" type="bool" value="$(arg use_torque_control)" />
+
 
          <!-- 1 - load the robot URDF as robot_description into param server (this will have to contain ros_control plugin and transmissions) -->
           <arg name="joint_limit_params" default="$(find ur_description)/config/ur5e/joint_limits.yaml"/>
