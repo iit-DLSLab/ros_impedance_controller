@@ -30,17 +30,17 @@ ros_impedance_controller:
       rh_hfe_joint: {p: 5.0, i: 0.0, d: 0.1}
       rh_kfe_joint: {p: 5.0, i: 0.0, d: 0.1}
   home:
-      lf_haa_joint:   0.2
-      lf_hfe_joint:  0.75
-      lf_kfe_joint:  -1.5
-      rf_haa_joint:  -0.2
-      rf_hfe_joint:  0.75
-      rf_kfe_joint:  -1.5
-      lh_haa_joint:   0.2
-      lh_hfe_joint: -0.75
-      lh_kfe_joint:   1.5
-      rh_haa_joint:  -0.2
-      rh_hfe_joint: -0.75
-      rh_kfe_joint:   1.5
+      lf_haa_joint:   0.0
+      lf_hfe_joint:   0.78539
+      lf_kfe_joint:  -1.57079
+      rf_haa_joint:  -0.0
+      rf_hfe_joint:   0.78539
+      rf_kfe_joint:  -1.57079
+      lh_haa_joint:   0.0
+      lh_hfe_joint:  -0.78539
+      lh_kfe_joint:   1.57079
+      rh_haa_joint:  -0.0
+      rh_hfe_joint:  -0.78539
+      rh_kfe_joint:   1.57079
 
 
