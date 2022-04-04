@@ -20,5 +20,19 @@
       <uri>model://tavolo</uri>
       <pose>0.0 0.0 0.0 0 0 0</pose>
     </include>
+
+    <include>
+      <name>box</name>
+      <uri>model://box</uri>
+      <pose> 0.125 0.75 0.975   0 0 0</pose> <!-- 0.85 + 0.25/2=0.975-->
+    </include>
+
+
+    <include>
+      <name>cylinder </name>
+      <uri>model://cylinder</uri>
+      <pose>0.6 0.25  1.0   0 0 0</pose>  <!-- 0.85 + 0.3/2= 1.0-->
+    </include>
+
   </world>
 </sdf>
