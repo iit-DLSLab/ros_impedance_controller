@@ -1,0 +1,24 @@
+﻿ros_impedance_controller:
+  type: ros_impedance_controller/Controller
+  joints:
+    - base_x_joint
+    - base_y_joint
+    - base_z_joint
+    - lf_haa_joint
+    - lf_hfe_joint
+    - lf_kfe_joint
+
+  gains:
+      base_x_joint: {p: 5.0, i: 0.0, d: 0.1}
+      base_y_joint: {p: 5.0, i: 0.0, d: 0.1}
+      base_z_joint: {p: 5.0, i: 0.0, d: 0.1}
+      lf_haa_joint: {p: 5.0, i: 0.0, d: 0.1}
+      lf_hfe_joint: {p: 5.0, i: 0.0, d: 0.1}
+      lf_kfe_joint: {p: 5.0, i: 0.0, d: 0.1}
+  home:
+      base_x_joint: 0.0
+      base_y_joint: 0.0
+      base_z_joint: 0.0
+      lf_haa_joint:   0.0
+      lf_hfe_joint:   0.78539
+      lf_kfe_joint:  -1.57079
