@@ -6,7 +6,7 @@
         <arg name="rviz_conf" default="$(find ros_impedance_controller)/config/operator.rviz"/>
 	<arg name="task_period" default="0.004" />
 
-	<arg name="world_name" default="$(find ros_impedance_controller)/worlds/tavolo.world"/>
+	<arg name="world_name" default="tavolo.world"/>
  	<arg name="position_controllers" value="joint_group_pos_controller" />
 	<arg name="torque_controllers" value="ros_impedance_controller" />
 
@@ -49,7 +49,7 @@
 
      	<!-- 2 launch gzserver (with empty world)/ gzcclient: Starts Gazebo and load the empty world if requested to do so - -->
         <include file="$(find gazebo_ros)/launch/empty_world.launch" >
-		<arg name="world_name" value="$(arg world_name)"/>
+		<arg name="world_name" value="$(find ros_impedance_controller)/worlds/$(arg world_name)"/>
                 <arg name="paused" default="false" />
                 <arg name="use_sim_time" default="true" />
                 <arg name="gui" value="$(arg gui)" />
