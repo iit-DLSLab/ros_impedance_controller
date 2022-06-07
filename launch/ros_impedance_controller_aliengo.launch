@@ -1,21 +1,23 @@
 <?xml version="1.0" ?>
 <launch>
 	<arg name="robot_name" default="aliengo" />
-        <arg name="only_torque" default="false" />
+
         <arg name="rviz" default="true" />
-        <arg name="gui" default="false" />
+        <arg name="gui" default="true" />
         <arg name="rviz_conf" default="$(find ros_impedance_controller)/config/operator.rviz"/>
+	<arg name="world_name" default="$(find ros_impedance_controller)/worlds/solo.world"/>
 
 
-	<arg name="task_period" default="0.004" />
-	<arg name="new_gazebo_version" default="false" />
+	<arg name="task_period" default="0.001" />
+	<arg name="new_gazebo_version" default="true" />
 
         <!-- load robot name into param server-->
         <param name="robot_name" type="str" value="$(arg robot_name)" />
 
         <!-- 1 launch gzserver (with empty world)/ gzcclient -->
         <include file="$(find gazebo_ros)/launch/empty_world.launch" >
-                <arg name="paused" default="false" />
+		<arg name="world_name" value="$(arg world_name)"/>
+                <arg name="paused" default="true" />
                 <arg name="use_sim_time" default="true" />
                 <arg name="gui" value="$(arg gui)" />
                 <arg name="headless" default="false" />
@@ -28,20 +30,23 @@
          <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find aliengo_description)/robots/aliengo.urdf.xacro'
          new_gazebo_version:=$(arg new_gazebo_version)  task_period:=$(arg task_period)"/>
 
+        <!-- send solo semantic description srdf to param server -->
+        <param name="robot_semantic_description" command="$(find xacro)/xacro --inorder '$(find aliengo_description)/robots/aliengo.srdf.xacro'" />
 
         <!-- 3 Spawn a robot into Gazebo -->
-        <node name="spawn_hyq_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model aliengo -z 1.0"/>
+        <node name="spawn_aliengo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model aliengo -z 0.5"/>
+
+-	<!-- Get robot to 0 position -->
+-        <node name="goto0" pkg="aliengo_description" type="go0" args="1.0"    output="screen" />
+
 
         <!-- 4 -Loading  controller configurations from YAML file to parameter server -->
         <rosparam file="$(find ros_impedance_controller)/config/joint_state_publisher.yaml" ns="/$(arg robot_name)" command="load"/>
 
-        <!-- Loading ros_impedance_controller config -->
-        <group if="$(arg only_torque)">
-           <rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller_only_torques.yaml" ns="/$(arg robot_name)" command="load"/>
-        </group>
-        <group unless="$(arg only_torque)">
-           <rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller_pd.yaml" ns="/$(arg robot_name)" command="load"/>
-        </group>
+
+     
+        <rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller_aliengo.yaml" ns="/$(arg robot_name)" command="load"/>
+
 
          <!-- 5  - Loading the controllers (joint state publisher (install ros-kinetic-joint-state-controller) is necessary for robot_state publisher to compute the TFs) -->
         <node name="ros_impedance_controller" pkg="controller_manager" type="spawner" respawn="false"
