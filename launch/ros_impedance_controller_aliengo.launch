@@ -6,44 +6,55 @@
         <arg name="gui" default="true" />
         <arg name="rviz_conf" default="$(find ros_impedance_controller)/config/operator.rviz"/>
 	<arg name="world_name" default="$(find ros_impedance_controller)/worlds/solo.world"/>
-
+        <arg name="real_robot" default="true" />
 
 	<arg name="task_period" default="0.001" />
 	<arg name="new_gazebo_version" default="true" />
 
         <!-- load robot name into param server-->
         <param name="robot_name" type="str" value="$(arg robot_name)" />
+	<param name="task_period"  value="$(arg task_period)" />
 
-        <!-- 1 launch gzserver (with empty world)/ gzcclient -->
-        <include file="$(find gazebo_ros)/launch/empty_world.launch" >
-		<arg name="world_name" value="$(arg world_name)"/>
-                <arg name="paused" default="true" />
-                <arg name="use_sim_time" default="true" />
-                <arg name="gui" value="$(arg gui)" />
-                <arg name="headless" default="false" />
-                <arg name="debug" default="false" />
-                <arg name="verbose" value="true" />
-        </include>
 
-        <!-- 2 - load the robot URDF into param server (this will have to contain ros_control plugin and transmissions) -->
-         <!-- to set the task_period  you need to regenerate the urdf from hyq description by changing <updateRate> of plugin libgazebo_ros_p3d.so-->
-         <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find aliengo_description)/robots/aliengo.urdf.xacro'
-         new_gazebo_version:=$(arg new_gazebo_version)  task_period:=$(arg task_period)"/>
+     
+  
 
-        <!-- send solo semantic description srdf to param server -->
-        <param name="robot_semantic_description" command="$(find xacro)/xacro --inorder '$(find aliengo_description)/robots/aliengo.srdf.xacro'" />
+       <!-- Send the robot urdf to parameter server -->
+        <include file="$(find wolf_description_utils)/launch/upload.launch">
+            <arg name="sensors" value="false" />
+            <arg name="task_period" value="$(arg task_period)" />
+            <arg name="robot_name" value="$(arg robot_name)" />
+	</include>
 
-        <!-- 3 Spawn a robot into Gazebo -->
-        <node name="spawn_aliengo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model aliengo -z 0.5"/>
+        <group if="$(arg real_robot)">
+            <!-- Spawn the hardware interface -->
+            <node name="aliengo_hardware_interface"
+            pkg="wolf_aliengo_interface" type="aliengo_ros_node" output="screen"/>
+        </group>
 
--	<!-- Get robot to 0 position -->
--        <node name="goto0" pkg="aliengo_description" type="go0" args="1.0"    output="screen" />
+      <group unless="$(arg real_robot)">
+            <!-- 1 launch gzserver (with empty world)/ gzcclient -->
+            <include file="$(find gazebo_ros)/launch/empty_world.launch" >
+                    <arg name="world_name" value="$(arg world_name)"/>
+                    <arg name="paused" default="true" />
+                    <arg name="use_sim_time" default="true" />
+                    <arg name="gui" value="$(arg gui)" />
+                    <arg name="headless" default="false" />
+                    <arg name="debug" default="false" />
+                    <arg name="verbose" value="true" />
+            </include>
+
+            <!-- 3 Spawn a robot into Gazebo -->
+            <node name="spawn_aliengo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param gazebo_robot_description -model aliengo -z 0.5"/>
+
+            <!-- Spawn and set the robot to the stand down position loaded from the SRDF file -->  
+            <node name="goto0" pkg="wolf_description_utils" type="go0"/>
+
+        </group>
 
 
         <!-- 4 -Loading  controller configurations from YAML file to parameter server -->
         <rosparam file="$(find ros_impedance_controller)/config/joint_state_publisher.yaml" ns="/$(arg robot_name)" command="load"/>
-
-
      
         <rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller_aliengo.yaml" ns="/$(arg robot_name)" command="load"/>
 
