@@ -18,6 +18,8 @@ add_message_files(
   FILES
   pid.msg
   BaseState.msg
+  ContactsState.msg
+  Forces.msg
 )
 
 add_service_files(
