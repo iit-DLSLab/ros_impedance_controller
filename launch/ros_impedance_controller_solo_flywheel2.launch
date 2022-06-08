@@ -1,30 +1,29 @@
 <?xml version="1.0" ?>
 <launch>
 	<arg name="robot_name" default="solo" />
+        <arg name="only_torque" default="false" />
         <arg name="rviz" default="true" />
         <arg name="gui" default="true" />
         <arg name="rviz_conf" default="$(find ros_impedance_controller)/config/operator.rviz"/>
+
         <arg name="world_name" default="$(find ros_impedance_controller)/worlds/solo.world"/>
-	<!-- if task_period is smaller than sim max_step_size (in world file) it is clamped to that value!!!!!!-->
+
+
+     <!-- if task_period is smaller than sim max_step_size (in world file) it is clamped to that value!!!!!!-->
 	<arg name="task_period" default="0.001" />
      	<arg name="new_gazebo_version" default="true" />
-
-
-
-        <arg name="flywheel" default="false" />
-        <arg name="flywheel2" default="false" />
+     	
+     	<arg name="flywheel" default="false" />
+        <arg name="flywheel2" default="" />
+        <!-- 0.5rad = 30deg -->
         <arg name="angle" default="0.0" />
-		
-        <!-- load robot name into param server for urdf generation-->
-        <param name="robot_name" type="str" value="$(arg robot_name)" />
-	<param name="flywheel" type="str" value="$(arg flywheel)" />
-	<param name="flywheel2" type="str" value="$(arg flywheel2)" />
-	<param name="angle" type="double" value="$(arg angle)" />
-
+	
      	
         <!-- load robot name into param server for urdf generation-->
         <param name="robot_name" type="str" value="$(arg robot_name)" />
 	<param name="flywheel" type="str" value="$(arg flywheel)" />
+	<param name="flywheel2" type="str" value="$(arg flywheel2)" />
+	<param name="angle" type="str" value="$(arg angle)" />
 
 
  	<!-- 1 Start gazebo server-->
@@ -64,7 +63,7 @@
        <arg name="internal_wrench" default="false" />
      
  	 <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find solo_description)/robots/solo.urdf.xacro'
-         new_gazebo_version:=$(arg new_gazebo_version) flywheel:=$(arg flywheel) flywheel2:=$(arg flywheel2) angle:=$(arg angle) load_force_sensors:=$(arg internal_wrench) task_period:=$(arg task_period)"/>
+         new_gazebo_version:=$(arg new_gazebo_version) flywheel:=$(arg flywheel) flywheel2:=$(arg flywheel2) angle:=$(arg angle) x_com:=$(arg x_com) y_com:=$(arg y_com) load_force_sensors:=$(arg internal_wrench) task_period:=$(arg task_period)"/>"/>
 
 
         <!-- send solo semantic description srdf to param server -->

@@ -13,8 +13,6 @@ ros_impedance_controller:
     - rh_haa_joint
     - rh_hfe_joint
     - rh_kfe_joint
-    - z_back_wheel_joint
-    - z_front_wheel_joint
     - z_left_wheel_joint
     - z_right_wheel_joint
   gains:
@@ -34,8 +32,6 @@ ros_impedance_controller:
       rh_hfe_joint: {p: 5.0, i: 0.0, d: 0.1}
       rh_kfe_joint: {p: 5.0, i: 0.0, d: 0.1}
 
-      z_back_wheel_joint: {p: 5.0, i: 0.0, d: 0.1}
-      z_front_wheel_joint: {p: 5.0, i: 0.0, d: 0.1}
       z_left_wheel_joint: {p: 5.0, i: 0.0, d: 0.1}
       z_right_wheel_joint: {p: 5.0, i: 0.0, d: 0.1}
   home:
@@ -51,8 +47,7 @@ ros_impedance_controller:
       rh_haa_joint:  -0.
       rh_hfe_joint:  -0.75
       rh_kfe_joint:   1.5
-      z_back_wheel_joint:  0.0
-      z_front_wheel_joint: 0.0
       z_left_wheel_joint:  0.0
       z_right_wheel_joint: 0.0
+
 
