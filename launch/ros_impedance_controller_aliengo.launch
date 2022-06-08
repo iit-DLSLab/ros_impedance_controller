@@ -6,9 +6,9 @@
         <arg name="gui" default="true" />
         <arg name="rviz_conf" default="$(find ros_impedance_controller)/config/operator.rviz"/>
 	<arg name="world_name" default="$(find ros_impedance_controller)/worlds/solo.world"/>
-        <arg name="real_robot" default="true" />
+        <arg name="gazebo" default="false" />
 
-	<arg name="task_period" default="0.001" />
+	<arg name="task_period" default="0.002" />
 	<arg name="new_gazebo_version" default="true" />
 
         <!-- load robot name into param server-->
@@ -26,13 +26,7 @@
             <arg name="robot_name" value="$(arg robot_name)" />
 	</include>
 
-        <group if="$(arg real_robot)">
-            <!-- Spawn the hardware interface -->
-            <node name="aliengo_hardware_interface"
-            pkg="wolf_aliengo_interface" type="aliengo_ros_node" output="screen"/>
-        </group>
-
-      <group unless="$(arg real_robot)">
+        <group if="$(arg gazebo)">
             <!-- 1 launch gzserver (with empty world)/ gzcclient -->
             <include file="$(find gazebo_ros)/launch/empty_world.launch" >
                     <arg name="world_name" value="$(arg world_name)"/>
@@ -49,7 +43,13 @@
 
             <!-- Spawn and set the robot to the stand down position loaded from the SRDF file -->  
             <node name="goto0" pkg="wolf_description_utils" type="go0"/>
+        </group>
 
+      <group unless="$(arg gazebo)">
+
+            <!-- Spawn the hardware interface -->
+            <node name="aliengo_hardware_interface"
+            pkg="wolf_aliengo_interface" type="aliengo_ros_node" respawn="false" output="screen"/>
         </group>
 
 
