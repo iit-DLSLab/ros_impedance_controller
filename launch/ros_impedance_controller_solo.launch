@@ -13,19 +13,20 @@
 
 
         <arg name="flywheel" default="false" />
-        <arg name="flywheel2" default="false" />
-        <arg name="angle" default="0.0" />
+        <arg name="flywheel2" default="true" />
+        <arg name="angle_deg" default="0.0" />
 		
         <!-- load robot name into param server for urdf generation-->
         <param name="robot_name" type="str" value="$(arg robot_name)" />
 	<param name="flywheel" type="str" value="$(arg flywheel)" />
 	<param name="flywheel2" type="str" value="$(arg flywheel2)" />
-	<param name="angle" type="double" value="$(arg angle)" />
+	<param name="angle_deg" type="double" value="$(arg angle_deg)" />
 
      	
         <!-- load robot name into param server for urdf generation-->
         <param name="robot_name" type="str" value="$(arg robot_name)" />
 	<param name="flywheel" type="str" value="$(arg flywheel)" />
+	<param name="flywheel2" type="str" value="$(arg flywheel2)" />
 
 
  	<!-- 1 Start gazebo server-->
@@ -65,7 +66,7 @@
        <arg name="internal_wrench" default="false" />
      
  	 <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find solo_description)/robots/solo.urdf.xacro'
-         new_gazebo_version:=$(arg new_gazebo_version) flywheel:=$(arg flywheel) flywheel2:=$(arg flywheel2) angle:=$(arg angle) load_force_sensors:=$(arg internal_wrench) task_period:=$(arg task_period)"/>
+         new_gazebo_version:=$(arg new_gazebo_version) flywheel:=$(arg flywheel) flywheel2:=$(arg flywheel2) angle_deg:=$(arg angle_deg) load_force_sensors:=$(arg internal_wrench) task_period:=$(arg task_period)"/>
 
 
         <!-- send solo semantic description srdf to param server -->
@@ -91,7 +92,7 @@
         </group>
         <group unless="$(arg flywheel)">
             <group unless="$(arg flywheel2)">
-                <rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller_pd_solo.yaml" ns="/$(arg robot_name)" command="load"/>
+                <rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller_solo.yaml" ns="/$(arg robot_name)" command="load"/>
             </group>
          </group>
 
