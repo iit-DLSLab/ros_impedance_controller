@@ -32,8 +32,8 @@ ros_impedance_controller:
       rh_hfe_joint: {p: 5.0, i: 0.0, d: 0.1}
       rh_kfe_joint: {p: 5.0, i: 0.0, d: 0.1}
 
-      z_left_wheel_joint: {p: 5.0, i: 0.0, d: 0.1}
-      z_right_wheel_joint: {p: 5.0, i: 0.0, d: 0.1}
+      z_left_wheel_joint: {p: 0.0, i: 0.0, d: 0.0}
+      z_right_wheel_joint: {p: 0.0, i: 0.0, d: 0.0}
   home:
       lf_haa_joint:   0.
       lf_hfe_joint:   0.75
