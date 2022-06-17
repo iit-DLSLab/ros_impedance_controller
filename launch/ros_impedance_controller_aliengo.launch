@@ -39,10 +39,10 @@
             </include>
 
             <!-- 3 Spawn a robot into Gazebo -->
-            <node name="spawn_aliengo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param gazebo_robot_description -model aliengo -z 0.8"/>
+            <node name="spawn_aliengo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param gazebo_robot_description -model aliengo -z 1.0"/>
 
             <!-- Spawn and set the robot to the stand down position loaded from the SRDF file -->  
-            <node name="goto0" pkg="wolf_description_utils" type="go0" output="screen"/>
+            <node name="goto0" pkg="wolf_description_utils" type="go0" args="1.0" output="screen"/>
       </group>
 
       <group unless="$(arg gazebo)">

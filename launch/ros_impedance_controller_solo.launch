@@ -13,7 +13,7 @@
 
 
         <arg name="flywheel" default="false" />
-        <arg name="flywheel2" default="true" />
+        <arg name="flywheel2" default="false" />
         <arg name="angle_deg" default="0.0" />
 		
         <!-- load robot name into param server for urdf generation-->
