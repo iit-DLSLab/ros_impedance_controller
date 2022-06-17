@@ -14,31 +14,48 @@ ros_impedance_controller:
     - rh_hfe_joint
     - rh_kfe_joint
   gains:
-    lf_haa_joint: {p: 10.0, i: 0.0, d: 1.0}
-    lf_hfe_joint: {p: 10.0, i: 0.0, d: 1.0}
-    lf_kfe_joint: {p: 10.0, i: 0.0, d: 1.0}
+    lf_haa_joint: {p: 15.00, i: 0.0, d: 3.0}
+    lf_hfe_joint: {p: 15.00, i: 0.0, d: 3.0}
+    lf_kfe_joint: {p: 15.00, i: 0.0, d: 3.0}
 
-    rf_haa_joint: {p: 10.0, i: 0.0, d: 1.0}
-    rf_hfe_joint: {p: 10.0, i: 0.0, d: 1.0}
-    rf_kfe_joint: {p: 10.0, i: 0.0, d: 1.0}
+    rf_haa_joint: {p: 15.00, i: 0.0, d: 3.0}
+    rf_hfe_joint: {p: 15.00, i: 0.0, d: 3.0}
+    rf_kfe_joint: {p: 15.00, i: 0.0, d: 3.0}
 
-    lh_haa_joint: {p: 10.0, i: 0.0, d: 1.0}
-    lh_hfe_joint: {p: 10.0, i: 0.0, d: 1.0}
-    lh_kfe_joint: {p: 10.0, i: 0.0, d: 1.0}
+    lh_haa_joint: {p: 15.00, i: 0.0, d: 3.0}
+    lh_hfe_joint: {p: 15.00, i: 0.0, d: 3.0}
+    lh_kfe_joint: {p: 15.00, i: 0.0, d: 3.0}
 
-    rh_haa_joint: {p: 10.0, i: 0.0, d: 1.0}
-    rh_hfe_joint: {p: 10.0, i: 0.0, d: 1.0}
-    rh_kfe_joint: {p: 10.0, i: 0.0, d: 1.0}
-home:
-    lf_haa_joint:   -0.2
-    lf_hfe_joint:  0.75
-    lf_kfe_joint:  -1.5
-    rf_haa_joint:  -0.2
-    rf_hfe_joint:  0.75
-    rf_kfe_joint:  -1.5
-    lh_haa_joint:   -0.2
-    lh_hfe_joint: 0.75
-    lh_kfe_joint:   -1.5
-    rh_haa_joint:  -0.2
-    rh_hfe_joint: 0.75
-    rh_kfe_joint:   -1.5
+    rh_haa_joint: {p: 15.00, i: 0.0, d: 3.0}
+    rh_hfe_joint: {p: 15.00, i: 0.0, d: 3.0}
+    rh_kfe_joint: {p: 15.00, i: 0.0, d: 3.0}
+#  home:
+#    lf_haa_joint:  0.2
+#    lf_hfe_joint:  0.7
+#    lf_kfe_joint: -1.4
+#    rf_haa_joint: -0.2
+#    rf_hfe_joint:  0.7
+#    rf_kfe_joint: -1.4
+#    lh_haa_joint:  0.2
+#    lh_hfe_joint:  0.7
+#    lh_kfe_joint: -1.4
+#    rh_haa_joint: -0.2
+#    rh_hfe_joint:  0.7
+#    rh_kfe_joint: -1.4
+
+  home:
+    lf_haa_joint:  0.6
+    lf_hfe_joint:  1.7
+    lf_kfe_joint: -2.77
+    rf_haa_joint: -0.6
+    rf_hfe_joint:  1.7
+    rf_kfe_joint: -2.77
+    lh_haa_joint:  0.6
+    lh_hfe_joint:  1.52
+    lh_kfe_joint: -2.77
+    rh_haa_joint: -0.6
+    rh_hfe_joint:  1.52
+    rh_kfe_joint: -2.77
+    
+    
+

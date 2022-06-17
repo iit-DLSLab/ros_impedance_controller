@@ -6,7 +6,7 @@
         <arg name="gui" default="true" />
         <arg name="rviz_conf" default="$(find ros_impedance_controller)/config/operator.rviz"/>
 	<arg name="world_name" default="$(find ros_impedance_controller)/worlds/solo.world"/>
-        <arg name="gazebo" default="false" />
+        <arg name="gazebo" default="true" />
 
 	<arg name="task_period" default="0.002" />
 	<arg name="new_gazebo_version" default="true" />
@@ -30,26 +30,24 @@
             <!-- 1 launch gzserver (with empty world)/ gzcclient -->
             <include file="$(find gazebo_ros)/launch/empty_world.launch" >
                     <arg name="world_name" value="$(arg world_name)"/>
-                    <arg name="paused" default="true" />
-                    <arg name="use_sim_time" default="true" />
+                    <arg name="paused" value="false" />
+                    <arg name="use_sim_time" value="true" />
                     <arg name="gui" value="$(arg gui)" />
-                    <arg name="headless" default="false" />
-                    <arg name="debug" default="false" />
+                    <arg name="headless" value="false" />
+                    <arg name="debug" value="false" />
                     <arg name="verbose" value="true" />
             </include>
 
             <!-- 3 Spawn a robot into Gazebo -->
-            <node name="spawn_aliengo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param gazebo_robot_description -model aliengo -z 0.5"/>
+            <node name="spawn_aliengo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param gazebo_robot_description -model aliengo -z 0.8"/>
 
             <!-- Spawn and set the robot to the stand down position loaded from the SRDF file -->  
-            <node name="goto0" pkg="wolf_description_utils" type="go0"/>
-        </group>
+            <node name="goto0" pkg="wolf_description_utils" type="go0" output="screen"/>
+      </group>
 
       <group unless="$(arg gazebo)">
-
             <!-- Spawn the hardware interface -->
-            <node name="aliengo_hardware_interface"
-            pkg="wolf_aliengo_interface" type="aliengo_ros_node" respawn="false" output="screen"/>
+            <node name="aliengo_hardware_interface" pkg="wolf_aliengo_interface" type="aliengo_ros_node" respawn="false" />
         </group>
 
 
