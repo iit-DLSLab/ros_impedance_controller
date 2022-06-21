@@ -8,6 +8,10 @@
 
         <arg name="world_name" default="$(find ros_impedance_controller)/worlds/solo.world"/>
 
+	<arg name="spawn_x" default="0.0" />
+	<arg name="spawn_y" default="0.0" />
+	<arg name="spawn_z" default="0.3" />
+
 
      <!-- if task_period is smaller than sim max_step_size (in world file) it is clamped to that value!!!!!!-->
 	<arg name="task_period" default="0.001" />
@@ -70,7 +74,7 @@
         <param name="robot_semantic_description" command="$(find xacro)/xacro --inorder '$(find solo_description)/robots/solo.srdf.xacro'" />
 
         <!-- 4 Spawn a robot into Gazebo -->
-        <node name="spawn_solo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model solo -z 0.3"/>
+        <node name="spawn_solo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model solo -x $(arg spawn_x) -y $(arg spawn_y) -z $(arg spawn_z)"/>
 
 
 -	<!-- Get robot to 0 position -->

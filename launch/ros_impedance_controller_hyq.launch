@@ -7,7 +7,7 @@
 
 
 	<arg name="task_period" default="0.004" />
-	<arg name="new_gazebo_version" default="false" />
+	<arg name="new_gazebo_version" default="true" />
 
         <!-- load robot name into param server-->
         <param name="robot_name" type="str" value="$(arg robot_name)" />
