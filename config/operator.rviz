@@ -75,35 +75,92 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        fake_link1:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        fake_link2:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
         lf_foot:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        lf_hip_assembly:
+        lf_hip:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        lf_lower_leg:
+        lf_lowerleg:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        lf_upper_leg:
+        lf_upperleg:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        lh_foot:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        lh_hip:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        lh_lowerleg:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        lh_upperleg:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rf_foot:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rf_hip:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rf_lowerleg:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rf_upperleg:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rh_foot:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rh_hip:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rh_lowerleg:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rh_upperleg:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
         trunk:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        trunk_imu:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -131,32 +188,14 @@ Visualization Manager:
       Marker Topic: /vis
       Name: MarkerArray
       Namespaces:
-        "": true
+        {}
       Queue Size: 100
       Value: true
     - Class: rviz/TF
-      Enabled: true
+      Enabled: false
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        base_link:
-          Value: true
-        fake_link1:
-          Value: true
-        fake_link2:
-          Value: true
-        lf_foot:
-          Value: true
-        lf_hip_assembly:
-          Value: true
-        lf_lower_leg:
-          Value: true
-        lf_upper_leg:
-          Value: true
-        trunk:
-          Value: true
-        world:
-          Value: false
       Marker Alpha: 1
       Marker Scale: 1
       Name: TF
@@ -166,7 +205,7 @@ Visualization Manager:
       Tree:
         {}
       Update Interval: 0
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -293,5 +332,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1615
-  X: 75
-  Y: 34
+  X: 2359
+  Y: 718
