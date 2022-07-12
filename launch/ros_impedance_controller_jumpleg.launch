@@ -39,7 +39,7 @@
 	<rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller_jumpleg.yaml" ns="/$(arg robot_name)" command="load"/>>
 
         <!-- 5  - Loading the controllers (joint state publisher (install ros-kinetic-joint-state-controller) is necessary for robot_state publisher to compute the TFs) -->
-	<node name="controller_manager" pkg="controller_manager" type="spawner" respawn="false"
+	<node name="ros_impedance_controller" pkg="controller_manager" type="spawner" respawn="false"
 		output="screen" ns="/$(arg robot_name)"  args="joint_state_publisher ros_impedance_controller" />
 	
         <!--  rviz stuff -->
