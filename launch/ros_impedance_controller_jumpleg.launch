@@ -50,8 +50,6 @@
         <!-- 7 run rviz -->
         <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_conf) -f world" if="$(arg rviz)"/>
 
-	 <!-- 8 run rl agent -->
-        <node name="rlagent" pkg="jumpleg_rl" type="agent.py" output="screen"/>
 
 </launch>
 
