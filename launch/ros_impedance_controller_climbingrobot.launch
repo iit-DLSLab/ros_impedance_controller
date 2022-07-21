@@ -16,7 +16,7 @@
         <param name="robot_name" type="str" value="$(arg robot_name)" />
 
 	<!-- 1 load robot description into param server-->
-	<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find climbingrobot_description)/urdf/climbingrobot.xacro' task_period:=$(arg task_period)"/>
+	<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find climbingrobot_description)/urdf/climbingrobot.xacro' task_period:=$(arg task_period) anchorZ:=$(arg spawn_z)"/>
         <param name="robot_semantic_description" command="$(find xacro)/xacro --inorder '$(find climbingrobot_description)/urdf/climbingrobot.srdf'" />
 
      

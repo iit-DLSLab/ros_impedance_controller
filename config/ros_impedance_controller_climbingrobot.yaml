@@ -8,8 +8,8 @@
     - wire_base_pitch
     - wire_base_roll 
     - wire_base_yaw 
-    - hipitch 
-    - hiproll 
+    - hip_pitch 
+    - hip_roll 
     - knee 
 
   gains:
@@ -20,8 +20,8 @@
       wire_base_pitch: {p: 0.0, i: 0.0, d: 0}
       wire_base_roll: {p: 0.0, i: 0.0, d: 0}
       wire_base_yaw: {p: 0.0, i: 0.0, d: 0}
-      hipitch: {p: 0.0, i: 0.0, d: 0}
-      hiproll: {p: 0.0, i: 0.0, d: 0}
+      hip_pitch: {p: 0.0, i: 0.0, d: 0}
+      hip_roll: {p: 0.0, i: 0.0, d: 0}
       knee: {p: 0.0, i: 0.0, d: 0}
 
 
@@ -33,7 +33,7 @@
       wire_base_pitch: 0
       wire_base_roll: 0
       wire_base_yaw: 0
-      hipitch: 0
-      hiproll: 0
+      hip_pitch: 0
+      hip_roll: 0
       knee: 0
  
