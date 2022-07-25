@@ -9,7 +9,8 @@
 
 	<arg name="spawn_x" default="0.0" />
 	<arg name="spawn_y" default="0.0" />
-	<arg name="spawn_z" default="13.0" />
+	<arg name="spawn_z" default="2.0" />
+
 
  	<param name="anchorZ" type="str" value="$(arg spawn_z)" />
 
@@ -20,6 +21,10 @@
 	<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find climbingrobot_description)/urdf/climbingrobot.xacro' 
 		task_period:=$(arg task_period) anchorZ:=$(arg spawn_z)"/>
         <param name="robot_semantic_description" command="$(find xacro)/xacro --inorder '$(find climbingrobot_description)/urdf/climbingrobot.srdf'" />
+
+	<!--  load climb wall into param server-->	
+	<param name="climb_wall" command="$(find xacro)/xacro --inorder '$(find climbingrobot_description)/urdf/climb_wall.xacro'  anchorZ:=$(arg spawn_z)"/>
+
 
      
      	<!-- 2 launch gzserver (with empty world)/ gzcclient: Starts Gazebo and load the empty world if requested to do so - -->
@@ -35,6 +40,12 @@
 
         <!-- 3 Spawn a robot (described in robot_description) into Gazebo -->
         <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model climbingrobot -x $(arg spawn_x) -y $(arg spawn_y)"/>
+
+	<arg name="wall_pos" value="$(eval arg('spawn_x') -0.37)"/>
+        <!--   Spawn a climbing wall -->
+        <node name="spawn_climb_wall" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -param climb_wall -model mountain -x $(arg wall_pos)  -y $(arg spawn_y)" />
+
+
 
 	<!-- 4 -Loading  controllers settings -->
 	<rosparam file="$(find ros_impedance_controller)/config/joint_state_publisher.yaml" ns="/$(arg robot_name)" command="load"/> 		

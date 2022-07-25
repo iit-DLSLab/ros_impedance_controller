@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name="climb_wall" xmlns:xacro="http://ros.org/wiki/xacro">
+
+   <xacro:arg name="anchorZ" default="1."/>	
+
+
+   <joint name="mountain_base" type="fixed">
+        <origin rpy="0 0 0"/>
+        <parent link="world"/>
+        <child link="wall"/>
+    </joint>
+
+       	<link name="wall">
+
+		<visual name="box">
+ 			<origin xyz="0 0 ${$(anchorZ)/2}"/>
+			<geometry>
+				<box size="0.1 $(arg anchorZ) $(arg anchorZ)"/>
+			</geometry>
+		</visual>
+	        <collision name="box">
+		       <origin xyz="0 0 ${$(arg anchorZ)/2}"/>
+		       <geometry>
+			
+ 				<box size="0.1 $(arg anchorZ) $(arg anchorZ)"/>
+	
+			</geometry>
+
+			 <surface>
+			  <bounce>
+			    <restitution_coefficient>0.01</restitution_coefficient>
+			    <threshold>5.0</threshold>
+			  </bounce>
+			  <friction>
+			    <ode>
+			      <mu>1</mu>
+			      <mu2>1</mu2>
+			    </ode>
+			  </friction>
+			  <contact>
+			     <ode>
+				<max_vel>0.1</max_vel>
+				<min_depth>0.001</min_depth>
+				<kp>1000000.0</kp>
+				<kd>1000.0</kd>
+			      </ode>
+			    </contact>
+			</surface>
+	       </collision>
+
+	</link>
+ 	<gazebo reference="wall">
+    	<static>true</static>
+  	</gazebo>
+
+
+</robot>
