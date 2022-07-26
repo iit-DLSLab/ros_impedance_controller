@@ -76,11 +76,31 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        fake_link1:
+          Value: true
+        base_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        fake_link2:
+          Value: true
+        foot:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        lower_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        pre-base1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        pre-base2:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        pre-base3:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -90,6 +110,15 @@ Visualization Manager:
           Show Trail: false
           Value: true
         pre_wire2:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        upper_link1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        upper_link2:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -125,24 +154,10 @@ Visualization Manager:
       Queue Size: 100
       Value: true
     - Class: rviz/TF
-      Enabled: true
+      Enabled: false
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        anchor:
-          Value: true
-        fake_link1:
-          Value: true
-        fake_link2:
-          Value: true
-        pre_wire1:
-          Value: true
-        pre_wire2:
-          Value: true
-        wire:
-          Value: true
-        world:
-          Value: true
       Marker Alpha: 1
       Marker Scale: 1
       Name: TF
@@ -150,16 +165,9 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        world:
-          fake_link1:
-            fake_link2:
-              anchor:
-                pre_wire1:
-                  pre_wire2:
-                    wire:
-                      {}
+        {}
       Update Interval: 0
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:

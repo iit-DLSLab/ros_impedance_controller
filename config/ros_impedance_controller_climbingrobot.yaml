@@ -3,7 +3,6 @@
   joints:
     - mountain_wire_pitch
     - mountain_wire_roll
-    - mountain_wire_yaw
     - wire_base_prismatic 
     - wire_base_pitch
     - wire_base_roll 
@@ -15,7 +14,6 @@
   gains:
       mountain_wire_pitch: {p: 0.0, i: 0.0, d: 0}
       mountain_wire_roll: {p: 0.0, i: 0.0, d: 0}
-      mountain_wire_yaw: {p: 0.0, i: 0.0, d: 0}
       wire_base_prismatic: {p: 0.0, i: 0.0, d: 0}
       wire_base_pitch: {p: 0.0, i: 0.0, d: 0}
       wire_base_roll: {p: 0.0, i: 0.0, d: 0}
@@ -28,7 +26,6 @@
   home:
       mountain_wire_pitch: 0.0
       mountain_wire_roll: 0.0
-      mountain_wire_yaw: 0.0
       wire_base_prismatic: 0
       wire_base_pitch: 0
       wire_base_roll: 0
