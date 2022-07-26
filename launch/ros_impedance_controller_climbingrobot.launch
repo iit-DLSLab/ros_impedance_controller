@@ -3,7 +3,7 @@
         <arg name="robot_name" default="climbingrobot" />
         <arg name="rviz" default="true" />
         <arg name="gui" default="true" />
-        <arg name="rviz_conf" default="$(find ros_impedance_controller)/config/operator.rviz"/>
+        <arg name="rviz_conf" default="$(find climbingrobot_description)/rviz/conf.rviz"/>
 	<arg name="task_period" default="0.001" />
 	<arg name="world_name" default="solo.world"/>
 
