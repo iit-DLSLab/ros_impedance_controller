@@ -38,14 +38,11 @@
                 <arg name="verbose" value="true" />
         </include>
 
+
+
         <!-- 3 Spawn a robot (described in robot_description) into Gazebo -->
         <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model climbingrobot -x $(arg spawn_x) -y $(arg spawn_y)"/>
-
-	<arg name="wall_pos" value="$(eval arg('spawn_x') -0.37)"/>
-        <!--   Spawn a climbing wall -->
-        <node name="spawn_climb_wall" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -param climb_wall -model mountain -x $(arg wall_pos)  -y $(arg spawn_y)" />
-
-
+	
 
 	<!-- 4 -Loading  controllers settings -->
 	<rosparam file="$(find ros_impedance_controller)/config/joint_state_publisher.yaml" ns="/$(arg robot_name)" command="load"/> 		
@@ -63,7 +60,7 @@
         <!-- 7 run rviz -->
         <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_conf) -f world" if="$(arg rviz)"/>
 
-
+	
 
 </launch>
 
