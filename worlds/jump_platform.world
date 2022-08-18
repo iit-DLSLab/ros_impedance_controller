@@ -6,7 +6,7 @@
       <!-- max step size has to be a multiple of the desired task rate-->
       <max_step_size>0.001</max_step_size> 
       <real_time_factor>1</real_time_factor>
-      <real_time_update_rate>200.0</real_time_update_rate>
+      <real_time_update_rate>300.0</real_time_update_rate>
     </physics>
     <!-- A global light source -->
     <include>
