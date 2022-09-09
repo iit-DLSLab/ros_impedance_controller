@@ -296,9 +296,9 @@ void Controller::baseGroundTruthCB(const nav_msgs::OdometryConstPtr &msg)
     tf::Vector3 world_origin_b = tf::quatRotate(q_base.inverse(), world_origin_w);
 
     //this is the transform from base to world to publish the world transform for rviz
-    w_transform_b.setRotation(q_base.inverse());
-    w_transform_b.setOrigin(world_origin_b);
-    br.sendTransform(tf::StampedTransform(w_transform_b, ros::Time::now(), "/base_link", "/world" ));
+    //w_transform_b.setRotation(q_base.inverse());
+    //w_transform_b.setOrigin(world_origin_b);
+    //br.sendTransform(tf::StampedTransform(w_transform_b, ros::Time::now(), "/base_link", "/world" ));
 }
 
 void Controller::update(const ros::Time& time, const ros::Duration& period)

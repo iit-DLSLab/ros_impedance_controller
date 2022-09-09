@@ -37,7 +37,7 @@
         <param name="robot_semantic_description" command="$(find xacro)/xacro --inorder '$(arg find_robot_description)/robots/$(arg robot_name).srdf.xacro'" />
 
         <!-- 3 Spawn a robot into Gazebo -->
-        <node name="spawn_solo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model $(arg robot_name) -x $(arg spawn_x) -y $(arg spawn_y) -z $(arg spawn_z)"/>
+        <node name="spawn_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model $(arg robot_name) -x $(arg spawn_x) -y $(arg spawn_y) -z $(arg spawn_z)"/>
 
 
 	<!-- 4  Get robot to 0 position -->
