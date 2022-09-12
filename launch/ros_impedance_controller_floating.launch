@@ -41,7 +41,7 @@
 
 
 	<!-- 4  Get robot to 0 position -->
-        <node name="goto0" pkg="$(arg robot_name)_description" type="go0" args="1.0"  />
+        <node name="goto0" pkg="$(arg robot_name)_description" type="go0" args="3.0 " output="screen" />
 
 
         <!-- 5 Loading  controllers configurations from YAML file to parameter server -->

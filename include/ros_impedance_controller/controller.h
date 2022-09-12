@@ -104,6 +104,9 @@ private:
     std::vector<double> joint_i_gain_;
     /** @brief Actual D value for the joints PID controller */
     std::vector<double> joint_d_gain_;
+    std::vector<std::string> joint_type_;
+    Eigen::VectorXd measured_joint_position_;
+    
     /** @brief Desired joint efforts computed by the PIDs */
     Eigen::VectorXd des_joint_efforts_pids_;
     tf::Quaternion q_base;

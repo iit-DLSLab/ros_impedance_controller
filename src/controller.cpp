@@ -6,7 +6,8 @@
  */
 
 #include <ros_impedance_controller/controller.h>
-
+#include<string.h>
+#include <math.h>
 
 namespace ros_impedance_controller {
 
@@ -95,7 +96,10 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
     des_joint_efforts_.fill(0.0);
     des_joint_efforts_pids_.resize(joint_states_.size());
     des_joint_efforts_.fill(0.0);
-
+    measured_joint_position_.resize(joint_states_.size());
+    measured_joint_position_.fill(0.0);
+    joint_type_.resize(joint_states_.size());
+    std::fill(joint_type_.begin(), joint_type_.end(), "revolute");
 
     joint_p_gain_.resize(joint_states_.size());
     joint_i_gain_.resize(joint_states_.size());
@@ -127,6 +131,8 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
        ROS_DEBUG("P value for joint %i is: %f",i,joint_p_gain_[i]);
        ROS_DEBUG("I value for joint %i is: %f",i,joint_i_gain_[i]);
        ROS_DEBUG("D value for joint %i is: %f",i,joint_d_gain_[i]);
+
+       controller_nh.getParam("joint_type/" + joint_names_[i], joint_type_[i]);
 
       //get statrup go0 position from yaml (TODO srdf)
        controller_nh.getParam("home/" + joint_names_[i], des_joint_positions_[i]);
@@ -311,17 +317,45 @@ void Controller::update(const ros::Time& time, const ros::Duration& period)
 //    std::cout<<"des_joint_positions_: " << des_joint_positions_.transpose()<<std::endl;
 
 
+
     // Write to the hardware interface
     //(NB this is not the convention
     //of ros but the convention of robcogen  that we define in ros_impedance_controller_XX.yaml!!!!
+    //std::cout << "-----------------------------------" << std::endl;
     for (unsigned int i = 0; i < joint_states_.size(); i++)
     {      
+    
+        measured_joint_position_(i) = joint_states_[i].getPosition();
+        
+        // wrap angles for revolute joints
+        //if (joint_type_[i].compare("revolute") == 0)
+        //{            
+          //  if (joint_states_[i].getPosition() > M_PI) 
+           // {
+           //     measured_joint_position_(i) = joint_states_[i].getPosition() - 2*M_PI;
+            //}
+            //if (joint_states_[i].getPosition() <-M_PI) 
+            //{
+            //    measured_joint_position_(i) = joint_states_[i].getPosition() + 2*M_PI;
+            //}
+        //}
+        
+
+        
+        std::cout << "***** joint: "<< joint_names_[i] << std::endl;
+         std::cout << "joint des:   "<< des_joint_positions_(i) << std::endl;
+        std::cout << "joint pos:   "<< joint_states_[i].getPosition() << std::endl;
+        std::cout << "wrap:        "<< measured_joint_position_(i) << std::endl;
+       
+        std::cout << "effort pid des:  "<< des_joint_efforts_pids_(i) << std::endl;
+        std::cout << "effort meas: "<< joint_states_[i].getEffort() << std::endl;
+    
         //compute PID
-        des_joint_efforts_pids_(i) = joint_p_gain_[i]*(des_joint_positions_(i)-joint_states_[i].getPosition()) +
+        des_joint_efforts_pids_(i) = joint_p_gain_[i]*(des_joint_positions_(i) -  measured_joint_position_(i) ) +
                                      joint_d_gain_[i]*(des_joint_velocities_(i)-joint_states_[i].getVelocity());
         //add PID + FFWD
         joint_states_[i].setCommand(des_joint_efforts_(i) +  des_joint_efforts_pids_(i));
-        //std::cout<<"DEBUG: joint effort joint " <<i <<"   " <<joint_states_[i].getEffort()<<std::endl;
+        
     }
 
 
