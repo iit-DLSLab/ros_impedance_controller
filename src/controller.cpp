@@ -326,29 +326,16 @@ void Controller::update(const ros::Time& time, const ros::Duration& period)
     {      
     
         measured_joint_position_(i) = joint_states_[i].getPosition();
-        
-        // wrap angles for revolute joints
-        //if (joint_type_[i].compare("revolute") == 0)
-        //{            
-          //  if (joint_states_[i].getPosition() > M_PI) 
-           // {
-           //     measured_joint_position_(i) = joint_states_[i].getPosition() - 2*M_PI;
-            //}
-            //if (joint_states_[i].getPosition() <-M_PI) 
-            //{
-            //    measured_joint_position_(i) = joint_states_[i].getPosition() + 2*M_PI;
-            //}
-        //}
-        
+
 
         
-        std::cout << "***** joint: "<< joint_names_[i] << std::endl;
-         std::cout << "joint des:   "<< des_joint_positions_(i) << std::endl;
-        std::cout << "joint pos:   "<< joint_states_[i].getPosition() << std::endl;
-        std::cout << "wrap:        "<< measured_joint_position_(i) << std::endl;
+        //std::cout << "***** joint: "<< joint_names_[i] << std::endl;
+        //std::cout << "joint des:   "<< des_joint_positions_(i) << std::endl;
+        //std::cout << "joint pos:   "<< joint_states_[i].getPosition() << std::endl;
+        //std::cout << "wrap:        "<< measured_joint_position_(i) << std::endl;
        
-        std::cout << "effort pid des:  "<< des_joint_efforts_pids_(i) << std::endl;
-        std::cout << "effort meas: "<< joint_states_[i].getEffort() << std::endl;
+        //std::cout << "effort pid des:  "<< des_joint_efforts_pids_(i) << std::endl;
+        //std::cout << "effort meas: "<< joint_states_[i].getEffort() << std::endl;
     
         //compute PID
         des_joint_efforts_pids_(i) = joint_p_gain_[i]*(des_joint_positions_(i) -  measured_joint_position_(i) ) +
