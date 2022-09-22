@@ -50,8 +50,7 @@
 
 	<group if="$(arg real_robot)">	
 	    <!-- 2 Spawn the hardware interface -->
-	    <arg name="find_robot_hw" value="$(eval find(robot_name+'_hardware_interface'))"/>
-            <node name="robot_hardware_interface" pkg="find_robot_hw" type="hw_interface_ros_node" respawn="false" />
+            <node name="robot_hardware_interface" pkg="$(arg robot_name)_harware_interface" type="ros_control_node" respawn="false" />
         </group>
   	
 
