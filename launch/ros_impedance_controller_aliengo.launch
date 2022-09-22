@@ -8,7 +8,7 @@
 	<arg name="world_name" default="$(find ros_impedance_controller)/worlds/solo.world"/>
         <arg name="gazebo" default="true" />
 
-	<arg name="task_period" default="0.002" />
+	<arg name="task_period" default="0.001" />
 	<arg name="new_gazebo_version" default="true" />
 
 	<arg name="spawn_x" default="0.0" />

@@ -5,6 +5,7 @@
         <arg name="gui" default="true" />
         <arg name="rviz_conf" default="$(find ros_impedance_controller)/config/operator.rviz"/>
         <arg name="world_name" default="solo.world"/>
+        <arg name="real_robot" default="false" />
 
 	<!-- if task_period is smaller than sim max_step_size (in world file) it is clamped to that value!!!!!!-->
 	<arg name="task_period" default="0.001" />
@@ -16,48 +17,58 @@
 		
         <!-- load robot name into param server for urdf generation-->
         <param name="robot_name" type="str" value="$(arg robot_name)" />
+	<param name="task_period"  value="$(arg task_period)" />
 
 
-         <!-- 1 launch gzserver / gzcclient -->
-        <include file="$(find gazebo_ros)/launch/empty_world.launch" >
-		<arg name="world_name" value="$(find ros_impedance_controller)/worlds/$(arg world_name)"/>
-                <arg name="paused" default="true" />
-                <arg name="use_sim_time" default="true" />
-                <arg name="gui" value="$(arg gui)" />
-                <arg name="headless" default="false" />
-                <arg name="debug" default="false" />
-                <arg name="verbose" value="true" />
-        </include>
-
-	<!-- 2 - load the robot URDF /SRDF into param server (this will have to contain ros_control plugin and transmissions) -->
-        <!-- to set the task_period  you need to regenerate the urdf from hyq description by changing <updateRate> of plugin libgazebo_ros_p3d.so-->       
+	<!-- 1 - load the robot URDF /SRDF into param server (this will have to contain ros_control plugin and transmissions) -->
+	<!-- to set the task_period  you need to regenerate the urdf from hyq description by changing <updateRate> of plugin libgazebo_ros_p3d.so-->       
 	<arg name="find_robot_description" value="$(eval find(robot_name+'_description'))"/>
-        <param name="robot_description" command="$(find xacro)/xacro --inorder '$(arg find_robot_description)/robots/$(arg robot_name).urdf.xacro' new_gazebo_version:=$(arg new_gazebo_version)  task_period:=$(arg task_period)"/>      
-	<!-- send solo semantic description srdf to param server -->
-        <param name="robot_semantic_description" command="$(find xacro)/xacro --inorder '$(arg find_robot_description)/robots/$(arg robot_name).srdf.xacro'" />
-
-        <!-- 3 Spawn a robot into Gazebo -->
-        <node name="spawn_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model $(arg robot_name) -x $(arg spawn_x) -y $(arg spawn_y) -z $(arg spawn_z)"/>
+	<param name="robot_description" command="$(find xacro)/xacro --inorder '$(arg find_robot_description)/robots/$(arg robot_name).urdf.xacro' new_gazebo_version:=$(arg new_gazebo_version)  task_period:=$(arg task_period)"/>      
+	<!-- send robot semantic description srdf to param server -->
+	<param name="robot_semantic_description" command="$(find xacro)/xacro --inorder '$(arg find_robot_description)/robots/$(arg robot_name).srdf.xacro'" />
 
 
-	<!-- 4  Get robot to 0 position -->
-        <node name="goto0" pkg="$(arg robot_name)_description" type="go0" args="3.0 " output="screen" />
+	<group unless="$(arg real_robot)">	
 
+	         <!-- 2 launch gzserver / gzcclient -->
+		<include file="$(find gazebo_ros)/launch/empty_world.launch" >
+			<arg name="world_name" value="$(find ros_impedance_controller)/worlds/$(arg world_name)"/>
+		        <arg name="paused" default="true" />
+		        <arg name="use_sim_time" default="true" />
+		        <arg name="gui" value="$(arg gui)" />
+		        <arg name="headless" default="false" />
+		        <arg name="debug" default="false" />
+		        <arg name="verbose" value="true" />
+		</include>
+	
+        	<!-- Spawn a robot into Gazebo -->
+        	<node name="spawn_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model $(arg robot_name) -x $(arg spawn_x) -y $(arg spawn_y) -z $(arg spawn_z)"/>
 
-        <!-- 5 Loading  controllers configurations from YAML file to parameter server -->
+		<!-- Get robot to 0 position -->
+        	<node name="goto0" pkg="$(arg robot_name)_description" type="go0" args="1.0" output="screen" />
+    	</group>
+
+	<group if="$(arg real_robot)">	
+	    <!-- 2 Spawn the hardware interface -->
+	    <arg name="find_robot_hw" value="$(eval find(robot_name+'_hardware_interface'))"/>
+            <node name="robot_hardware_interface" pkg="find_robot_hw" type="hw_interface_ros_node" respawn="false" />
+        </group>
+  	
+
+	<!-- 3 Loading  controllers configurations from YAML file to parameter server -->
         <rosparam file="$(find ros_impedance_controller)/config/joint_state_publisher.yaml" ns="/$(arg robot_name)" command="load"/>
 	<rosparam file="$(find ros_impedance_controller)/config/ros_impedance_controller_$(arg robot_name).yaml" ns="/$(arg robot_name)" command="load"/>>
 
-        <!-- 6 Loading the controllers into the controller manager -->
+        <!-- 4 Loading the controllers into the controller manager -->
         <node name="ros_impedance_controller" pkg="controller_manager" type="spawner" respawn="false"
 		        output="screen" ns="/$(arg robot_name)" args="joint_state_publisher ros_impedance_controller"/>
 
         <!-- rviz stuff -->
-        <!-- 7- load robot_state_publisher: converts joint states to TF transforms, it is just for rviz, etc -->
+        <!-- 5- load robot_state_publisher: converts joint states to TF transforms, it is just for rviz, etc -->
         <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
 		<remap from="/joint_states" to="/$(arg robot_name)/joint_states"/> 
 	</node>
-        <!-- 8 run rviz -->
+        <!-- 6 run rviz -->
         <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_conf) -f world" if="$(arg rviz)"/>
 </launch>
 
