@@ -27,7 +27,7 @@
           <arg name="visual_params" default="$(find ur_description)/config/ur5e/visual_parameters.yaml"/>
       
 	<group if="$(arg use_torque_control)">
-	  <include file="$(find ur_description)/launch/load_ur5e.launch">
+	  <include file="$(find ur_description)/launch/upload.launch">
 		    <arg name="gazebo" value="$(arg gazebo)" />
 		    <arg name="joint_limit_params" value="$(arg joint_limit_params)"/>
 		    <arg name="kinematics_params" value="$(arg kinematics_params)"/>
@@ -37,7 +37,7 @@
 		  </include>
         </group>
   	<group unless="$(arg use_torque_control)">
-         <include file="$(find ur_description)/launch/load_ur5e.launch">
+         <include file="$(find ur_description)/launch/upload.launch">
             <arg name="gazebo" value="$(arg gazebo)" />
             <arg name="joint_limit_params" value="$(arg joint_limit_params)"/>
             <arg name="kinematics_params" value="$(arg kinematics_params)"/>
